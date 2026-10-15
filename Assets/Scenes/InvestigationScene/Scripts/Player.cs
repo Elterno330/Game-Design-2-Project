@@ -28,6 +28,6 @@ public class Player : MonoBehaviour
 
         movement = movement.normalized;
 
-        rb.linearVelocity = movement * 5f;
+        rb.linearVelocity = movement * 10f;
     }
 }
