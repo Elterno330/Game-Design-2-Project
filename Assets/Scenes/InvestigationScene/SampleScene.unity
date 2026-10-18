@@ -1152,6 +1152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCDialog
   dialog: {fileID: 1700129884}
+  backgroundBox: {fileID: 945639881}
 --- !u!135 &935681246
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1190,7 +1191,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &945639882
 RectTransform:
   m_ObjectHideFlags: 0
