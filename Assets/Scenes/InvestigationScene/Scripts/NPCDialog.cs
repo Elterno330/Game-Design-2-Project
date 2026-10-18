@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class NPCDialog : MonoBehaviour
 {
     public GameObject dialog;
+    public GameObject backgroundBox;
     Boolean playerNear = false;
 
     void Start()
@@ -17,6 +18,7 @@ public class NPCDialog : MonoBehaviour
         if (Keyboard.current.eKey.isPressed && playerNear)
         {
             dialog.SetActive(true);
+            backgroundBox.SetActive(true);
         }
     }
 
@@ -36,6 +38,7 @@ public class NPCDialog : MonoBehaviour
         {
             playerNear = false;
             dialog.SetActive(false);
+            backgroundBox.SetActive(false);
         }
     }
 }
