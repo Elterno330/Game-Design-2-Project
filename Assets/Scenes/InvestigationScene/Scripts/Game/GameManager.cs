@@ -1,10 +1,12 @@
 using System;
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 public class GameManager : MonoBehaviour
 {
+    public bool gameOver = false;
     public int numberOfActions = 5;
     public Boolean nightTime = false;
     public GameObject nightPlane;
@@ -12,6 +14,7 @@ public class GameManager : MonoBehaviour
     public Player player;
     Vector3 startingPosition = new Vector3(0, 0, 0);
     Quaternion startingRotation;
+    public bool choosingSuspect = false;
 
 
 
@@ -58,6 +61,35 @@ public class GameManager : MonoBehaviour
         StartCoroutine(HideNightScreenAfterDelay());
         player.transform.position = startingPosition;
         player.transform.rotation = startingRotation;
+    }
+
+    public void accusation()
+    {
+        Debug.Log("Accusation made!");
+        NPCDialog.dialog.text = "Who do you want to accuse? (1)Daisy,(2)Sebes,(3)Percy,(4)Elara";
+        choosingSuspect = true;
+    }
+
+    public void checkAccusation(string suspect)
+    {
+        player.accusationMode = false;
+        choosingSuspect = false;
+
+        if (suspect == "Sebes")
+        {
+            NPCDialog.dialog.text =
+                "You correctly identified Sebes as the werewolf!";
+
+            Debug.Log("Player wins!");
+        }
+        else
+        {
+            NPCDialog.dialog.text =
+                "You accused the wrong person!";
+
+            Debug.Log("Player loses!");
+        }
+        gameOver = true;
     }
 
     IEnumerator HideNightScreenAfterDelay()
