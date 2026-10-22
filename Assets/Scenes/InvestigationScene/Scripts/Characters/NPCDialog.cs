@@ -1,24 +1,31 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class NPCDialog : MonoBehaviour
 {
-    public GameObject dialog;
+    public TextMeshProUGUI dialog;
     public GameObject backgroundBox;
+    public GameManager gameManager;
     Boolean playerNear = false;
 
     void Start()
     {
-        dialog.SetActive(false);
+        dialog.gameObject.SetActive(false);
+        backgroundBox.SetActive(false);
     }
 
     void Update()
     {
-        if (Keyboard.current.eKey.isPressed && playerNear)
+        if (Keyboard.current.eKey.wasPressedThisFrame && playerNear)
         {
-            dialog.SetActive(true);
+            dialog.gameObject.SetActive(true);
             backgroundBox.SetActive(true);
+            if(gameManager.numberOfActions > 0)
+            {
+                commitAction();
+            }
         }
     }
 
@@ -37,8 +44,13 @@ public class NPCDialog : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerNear = false;
-            dialog.SetActive(false);
+            dialog.gameObject.SetActive(false);    
             backgroundBox.SetActive(false);
         }
+    }
+
+    void commitAction()
+    {
+        gameManager.actionUsed();
     }
 }
