@@ -6,16 +6,18 @@ public class NPCDialog : MonoBehaviour
 {
     public GameObject dialog;
     public GameObject backgroundBox;
+    public GameObject interactionPrompt;
     Boolean playerNear = false;
 
     void Start()
     {
         dialog.SetActive(false);
+        if (interactionPrompt != null) interactionPrompt.SetActive(false);
     }
 
     void Update()
     {
-        if (Keyboard.current.eKey.isPressed && playerNear)
+        if (Keyboard.current != null && Keyboard.current.eKey.isPressed && playerNear)
         {
             dialog.SetActive(true);
             backgroundBox.SetActive(true);
@@ -28,6 +30,7 @@ public class NPCDialog : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerNear = true;
+            if (interactionPrompt != null) interactionPrompt.SetActive(true);
         }
     }
 
@@ -39,6 +42,7 @@ public class NPCDialog : MonoBehaviour
             playerNear = false;
             dialog.SetActive(false);
             backgroundBox.SetActive(false);
+            if (interactionPrompt != null) interactionPrompt.SetActive(false);
         }
     }
 }
