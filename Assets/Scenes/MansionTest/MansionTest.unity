@@ -1666,7 +1666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22099c02ac7a88b4bbb3a89b05efd605, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCDialog
-  dialog: {fileID: 1700129884}
+  dialog: {fileID: 1700129886}
   backgroundBox: {fileID: 945639881}
   interactionPrompt: {fileID: 0}
 --- !u!135 &935681246
@@ -2505,7 +2505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22099c02ac7a88b4bbb3a89b05efd605, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCDialog
-  dialog: {fileID: 1700129884}
+  dialog: {fileID: 1700129886}
   backgroundBox: {fileID: 945639881}
   interactionPrompt: {fileID: 1230640460}
 --- !u!135 &1532632885

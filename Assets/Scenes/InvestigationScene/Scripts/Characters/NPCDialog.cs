@@ -1,32 +1,36 @@
-using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class NPCDialog : MonoBehaviour
 {
-    public GameObject dialog;
+    public TextMeshProUGUI dialog;
     public GameObject backgroundBox;
     public GameObject interactionPrompt;
-    Boolean playerNear = false;
+    public GameManager gameManager;
+    bool playerNear = false;
 
     void Start()
     {
-        dialog.SetActive(false);
+        dialog.gameObject.SetActive(false);
+        backgroundBox.SetActive(false);
         if (interactionPrompt != null) interactionPrompt.SetActive(false);
     }
 
     void Update()
     {
-        if (Keyboard.current != null && Keyboard.current.eKey.isPressed && playerNear)
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame && playerNear)
         {
-            dialog.SetActive(true);
+            dialog.gameObject.SetActive(true);
             backgroundBox.SetActive(true);
+            // The mansion exploration scene can run without the day/night manager.
+            if (gameManager != null && gameManager.numberOfActions > 0)
+                commitAction();
         }
     }
 
     void OnTriggerEnter(Collider other)
     {
-
         if (other.CompareTag("Player"))
         {
             playerNear = true;
@@ -36,13 +40,17 @@ public class NPCDialog : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        Debug.Log("Player left");
         if (other.CompareTag("Player"))
         {
             playerNear = false;
-            dialog.SetActive(false);
+            dialog.gameObject.SetActive(false);
             backgroundBox.SetActive(false);
             if (interactionPrompt != null) interactionPrompt.SetActive(false);
         }
+    }
+
+    void commitAction()
+    {
+        gameManager.actionUsed();
     }
 }
