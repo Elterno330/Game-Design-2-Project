@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public Camera dayCamera;
     public Camera nightCamera;
     public bool accusationMode = false;
+    [System.NonSerialized] public bool inputLocked;
 
     void Start()
     {
@@ -20,6 +21,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (inputLocked) return;
         var keyboard = Keyboard.current;
         if (walkIn3D)
         {
@@ -81,6 +83,11 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (inputLocked)
+        {
+            rb.linearVelocity = walkIn3D ? new Vector3(0f, rb.linearVelocity.y, 0f) : Vector3.zero;
+            return;
+        }
         var keyboard = Keyboard.current;
         if (keyboard == null) return;
         if (walkIn3D)

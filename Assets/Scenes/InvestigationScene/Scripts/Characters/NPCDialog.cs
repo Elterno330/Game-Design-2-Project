@@ -8,10 +8,13 @@ public class NPCDialog : MonoBehaviour
     public GameObject backgroundBox;
     public GameObject interactionPrompt;
     public GameManager gameManager;
+    public MansionPrototype prototype;
+    public string prototypeCharacterId;
     bool playerNear = false;
 
     void Start()
     {
+        if (prototype != null) return;
         dialog.gameObject.SetActive(false);
         backgroundBox.SetActive(false);
         if (interactionPrompt != null) interactionPrompt.SetActive(false);
@@ -19,6 +22,7 @@ public class NPCDialog : MonoBehaviour
 
     void Update()
     {
+        if (prototype != null) return;
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame && playerNear)
         {
             dialog.gameObject.SetActive(true);
@@ -31,6 +35,7 @@ public class NPCDialog : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (prototype != null) return;
         if (other.CompareTag("Player"))
         {
             playerNear = true;
@@ -40,6 +45,7 @@ public class NPCDialog : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
+        if (prototype != null) return;
         if (other.CompareTag("Player"))
         {
             playerNear = false;

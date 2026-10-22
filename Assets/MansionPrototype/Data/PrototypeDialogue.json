@@ -1,0 +1,144 @@
+{
+  "intro": [
+    "I guess if we’re all trapped in here together I should try and introduce myself to everyone and gather some information."
+  ],
+  "question": [
+    "Did anything seem unusual about the guests today?"
+  ],
+  "interrogation": [
+    "I try my best not to spy… but earlier, I overheard Daisy and Sebes arguing in the hall.",
+    "Daisy was trying to pick the lock on the master’s safe, and Sebes had offered to help pry it open as long as she split whatever was inside with him.",
+    "They couldn’t figure out how to get it open regardless, but it seems like both of them are quite desperate for money."
+  ],
+  "win": [
+    "[Sebes] is revealed!",
+    "Before he can lunge at you, you fire your single silver bullet directly into his chest.",
+    "The beast falls to the floor, defeated.",
+    "You saved the remaining guests.",
+    "You win!"
+  ],
+  "lose": [
+    "[NAME] falls to the ground, but their blood is human.",
+    "A terrible chill goes down your spine as a monstrous howl echoes from the hallway behind you.",
+    "You chose the wrong suspect, leaving the real monster alive… (you lose)"
+  ],
+  "characters": [
+    {
+      "id": "Daisy",
+      "displayName": "Daisy Finn",
+      "day1": [
+        "I’m Daisy.",
+        "I only snuck into this mansion to explore, and now we’re all stuck here because of this stupid snowstorm.",
+        "I don’t know any of these people, please stop bothering me unless you know a way to get out of here."
+      ],
+      "day2": [
+        "I didn’t do it!",
+        "Yes, I was trying to figure out how to get something out of this situation, but I wouldn't kill a sweet old man!",
+        "You have to believe me!"
+      ],
+      "accusation": [
+        "Are you crazy??!",
+        "I told you already, I didn’t kill him!",
+        "I’m not a murderer, I wouldn’t even know what to do with a bunch of tools!",
+        "Please, you have to believe me!"
+      ]
+    },
+    {
+      "id": "Sebes",
+      "displayName": "Sebes Yorke",
+      "day1": [
+        "A monster hunter, eh?",
+        "The name’s Sebes Yorke.",
+        "You may have heard of me, I’m somewhat of a hunter myself.",
+        "I hear there’s a hefty bounty on this werewolf, if you want to team up and split the profits, I’m your guy.",
+        "I’m always looking to make some quick cash."
+      ],
+      "day2": [
+        "A shame he’s gone.",
+        "You see though, this just proves how dangerous the beast really is!",
+        "I say the town needs to double… no, triple! the bounty on this thing.",
+        "The risk has seriously gone up."
+      ],
+      "accusation": [
+        "This is outrageous!",
+        "I'm a businessman!",
+        "You really think I'd dirty my hands for a few bucks when there's a huge bounty on the line?",
+        "...Although, I suppose I could collect the bounty AND pawn those antique tools.",
+        "If you're going to stand between me and my payday, hunter, I'll just have to tear you apart!"
+      ]
+    },
+    {
+      "id": "Percy",
+      "displayName": "Percy Norn",
+      "day1": [
+        "You?",
+        "A hunter?",
+        "I wouldn’t believe it with that gear.",
+        "It looks like you haven’t had an upgrade in a decade.",
+        "Who designs a gun with only one chamber?",
+        "Don’t expect me to fix it for free just because we’re stuck here together.",
+        "Well?",
+        "What are you standing around for?",
+        "My name?",
+        "Percy, but it’s irrelevant to you.",
+        "If your tools need fixing, come and find me.",
+        "Not that I care if you get yourself killed or anything."
+      ],
+      "day2": [
+        "Damn it… that old man didn’t deserve that.",
+        "And whoever took all his tools, for what?",
+        "That beast wouldn’t even know how to hold a clockmaker’s screwdriver correctly.",
+        "Look, just figure out who did this, alright?",
+        "Don’t make me forge a silver weapon myself and do your job for you."
+      ],
+      "accusation": [
+        "Are you actually this stupid?",
+        "Look at my belt!",
+        "I make swords and armor, not fragile little watches and clocks.",
+        "What would I even do with some clockmaker’s tweezers?",
+        "Pull the trigger if you want, I hope you’re happy when all of our blood is on your hands."
+      ]
+    },
+    {
+      "id": "Elara",
+      "displayName": "Elara Venn",
+      "day1": [
+        "Welcome to the mansion.",
+        "I am Elara, the head of housekeeping for the estate.",
+        "I guide the staff that prepare the rooms and maintain the house.",
+        "I’d prefer to stay out of the guests’ conflicts, but I do know these halls better than anyone else.",
+        "Let me know if your room needs cleaning, and I’ll get on it right away."
+      ],
+      "day2": [
+        "Mr. Palmer was nothing but kind to me and the staff.",
+        "To see a guest’s life taken so violently in these halls is deeply unsettling.",
+        "Please, hunter, find the person responsible for this."
+      ],
+      "accusation": [
+        "Hunter, please be reasonable… I have dedicated my life to maintaining this estate and caring for its guests.",
+        "I have no need for any more money, nor any reason to have taken the life of an innocent guest.",
+        "You are making a grave mistake."
+      ]
+    },
+    {
+      "id": "Harold",
+      "displayName": "Harold Palmer",
+      "day1": [
+        "Hello there!",
+        "This weather is quite dreary, isn’t it?",
+        "Excuse my rudeness, my name is Harold, I was called here to repair the clocks around the mansion, but it looks like we’re all trapped in here for the time being.",
+        "I don’t know if my ears are playing tricks on me, but I heard there might be a werewolf of some sorts, but I’m trying to make the best of it.",
+        "Would you care for a peppermint?"
+      ],
+      "day2": [
+        "Poor Harold… he was just trying to do his job and ended up as dinner for some beast...",
+        "What’s this?",
+        "His bag!",
+        "It’s been completely emptied, tools all over the floor.",
+        "The tools and parts he brought along must have been expensive, they’re all missing?",
+        "The werewolf didn’t just kill him, it robbed him!"
+      ],
+      "accusation": []
+    }
+  ]
+}
