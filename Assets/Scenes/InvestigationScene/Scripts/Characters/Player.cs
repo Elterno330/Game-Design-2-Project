@@ -7,10 +7,60 @@ public class Player : MonoBehaviour
     public GameManager gameManager;
     public Camera dayCamera;
     public Camera nightCamera;
+    public bool accusationMode = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+    }
+
+    void Update()
+    {
+        if(gameManager.gameOver)
+            return;
+        if (Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            if(!accusationMode)
+            {
+                gameManager.nightPlane.SetActive(true);
+                gameManager.NPCDialog.dialog.text = "Are you sure you want to make an accusation? Press F to confirm. Press D to cancel.";
+                gameManager.NPCDialog.dialog.gameObject.SetActive(true);
+                accusationMode = true;
+            }
+            else
+            {
+                gameManager.accusation();
+                gameManager.choosingSuspect = true;
+            }
+        }
+        if (Keyboard.current.dKey.wasPressedThisFrame)
+        {
+            if (accusationMode)
+            {
+                gameManager.NPCDialog.dialog.gameObject.SetActive(false);
+                gameManager.nightPlane.SetActive(false);
+                accusationMode = false;
+            }
+        }
+        if (gameManager.choosingSuspect)
+        {
+            if (Keyboard.current.digit1Key.wasPressedThisFrame)
+            {
+                gameManager.checkAccusation("Daisy");
+            }
+            else if (Keyboard.current.digit2Key.wasPressedThisFrame)
+            {
+                gameManager.checkAccusation("Sebes");
+            }
+            else if (Keyboard.current.digit3Key.wasPressedThisFrame)
+            {
+                gameManager.checkAccusation("Percy");
+            }
+            else if (Keyboard.current.digit4Key.wasPressedThisFrame)
+            {
+                gameManager.checkAccusation("Elara");
+            }
+        }
     }
 
     void FixedUpdate()
@@ -64,4 +114,5 @@ public class Player : MonoBehaviour
             rb.linearVelocity = movement * 10f;
         }
     }
+
 }
