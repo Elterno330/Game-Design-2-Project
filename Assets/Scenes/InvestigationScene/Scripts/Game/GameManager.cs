@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     Vector3 startingPosition = new Vector3(0, 0, 0);
     Quaternion startingRotation;
     public bool choosingSuspect = false;
+    public bool scriptedPrototype = false;
 
 
 
@@ -27,6 +28,8 @@ public class GameManager : MonoBehaviour
     public void actionUsed()
     {
         numberOfActions--;
+        // The scripted prototype changes days after the interrogation finishes.
+        if (scriptedPrototype) return;
         if (numberOfActions <= 0)
         {
             // Handle the case when no actions are left

@@ -3,19 +3,37 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    public bool walkIn3D = false;
+    public float moveSpeed = 10f;
     Rigidbody rb;
+    Vector3 spawnPosition;
     public GameManager gameManager;
     public Camera dayCamera;
     public Camera nightCamera;
     public bool accusationMode = false;
+    [System.NonSerialized] public bool inputLocked;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        spawnPosition = transform.position;
     }
 
     void Update()
     {
+        if (inputLocked) return;
+        var keyboard = Keyboard.current;
+        if (walkIn3D)
+        {
+            if (transform.position.y < spawnPosition.y - 15f ||
+                (keyboard != null && keyboard.rKey.wasPressedThisFrame))
+            {
+                rb.position = spawnPosition;
+                rb.linearVelocity = Vector3.zero;
+            }
+            return;
+        }
+        if (gameManager == null || keyboard == null) return;
         if(gameManager.gameOver)
             return;
         if (Keyboard.current.fKey.wasPressedThisFrame)
@@ -65,6 +83,26 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (inputLocked)
+        {
+            rb.linearVelocity = walkIn3D ? new Vector3(0f, rb.linearVelocity.y, 0f) : Vector3.zero;
+            return;
+        }
+        var keyboard = Keyboard.current;
+        if (keyboard == null) return;
+        if (walkIn3D)
+        {
+            Vector3 direction = Vector3.zero;
+            if (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed) direction += Vector3.forward;
+            if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed) direction += Vector3.back;
+            if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed) direction += Vector3.left;
+            if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed) direction += Vector3.right;
+            Vector3 velocity = direction.normalized * moveSpeed;
+            velocity.y = rb.linearVelocity.y;
+            rb.linearVelocity = velocity;
+            return;
+        }
+        if (gameManager == null) return;
         if (gameManager.nightTime == false)
         {
             Vector3 movement = Vector3.zero;
