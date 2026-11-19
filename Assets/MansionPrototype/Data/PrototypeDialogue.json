@@ -3,7 +3,7 @@
     "I guess if we’re all trapped in here together I should try and introduce myself to everyone and gather some information."
   ],
   "question": [
-    "Did anything seem unusual about the guests today?"
+    "What else can you tell me?"
   ],
   "interrogation": [
     "I try my best not to spy… but earlier, I overheard Daisy and Sebes arguing in the hall.",
@@ -11,7 +11,7 @@
     "They couldn’t figure out how to get it open regardless, but it seems like both of them are quite desperate for money."
   ],
   "win": [
-    "[Sebes] is revealed!",
+    "[NAME] is revealed!",
     "Before he can lunge at you, you fire your single silver bullet directly into his chest.",
     "The beast falls to the floor, defeated.",
     "You saved the remaining guests.",
@@ -26,11 +26,139 @@
     {
       "id": "Daisy",
       "displayName": "Daisy Finn",
-      "identity": "Visitor exploring the mansion.",
-      "day1": [
-        "I’m Daisy.",
-        "I only snuck into this mansion to explore, and now we’re all stuck here because of this stupid snowstorm.",
-        "I don’t know any of these people, please stop bothering me unless you know a way to get out of here."
+      "identity": "Highschool Student",
+      "traits": [
+        "Young",
+        "Angry",
+        "AnimalSide",
+        "NeedsMoney",
+        "WantsToLeave"
+      ],
+      "introduction": [
+        "I’m Daisy. I only snuck into this mansion to explore, and now we’re all stuck here because of this stupid snowstorm. I don’t know any of these people, please stop bothering me unless you know a way to get out of here."
+      ],
+      "dailyGreetings": [
+        "Don’t talk to me unless you’ve found a way out.",
+        "The front door’s still stuck. I checked.",
+        "Something scratched at the window last night.",
+        "I’m not waiting here until that thing finds us.",
+        "If you find a way out, tell me. I don’t want to die in this place."
+      ],
+      "clueDialogue": {
+        "saw": "I saw [evidence] when I was looking for a way out. Don’t make a big thing of it.",
+        "heard": "I heard [sound] near [place]. I wasn’t going to investigate it alone.",
+        "found": "I found [evidence]. I didn’t take it, if that’s what you’re asking.",
+        "inferred": "Someone was in a hurry. I know what it looks like when people are trying to get out."
+      },
+      "facts": [
+        {
+          "id": "DAISY_SELF_ANGRY",
+          "targetId": "",
+          "title": "About Daisy Finn",
+          "text": "More about me? I said to stop bothering me, why do people keep asking?"
+        },
+        {
+          "id": "DAISY_SELF_ANIMAL_SIDE",
+          "targetId": "",
+          "title": "About Daisy Finn",
+          "text": "I don't need to ask for permission, I'll do what I want."
+        },
+        {
+          "id": "DAISY_SELF_NEEDS_MONEY",
+          "targetId": "",
+          "title": "About Daisy Finn",
+          "text": "Why I'm here? I came to explore and find some things to sell is all."
+        },
+        {
+          "id": "DAISY_SELF_WANTS_TO_LEAVE",
+          "targetId": "",
+          "title": "About Daisy Finn",
+          "text": "Can you catch this werewolf already? How much longer are we gonna be trapped here?"
+        },
+        {
+          "id": "DAISY_SHIZUMI_KUSHINADA_YOUNG",
+          "targetId": "Shizumi",
+          "title": "Daisy Finn on Shizumi Kushinada",
+          "text": "Shizumi? I think she goes to the same school as me, but we aren't friends."
+        },
+        {
+          "id": "DAISY_SHIZUMI_KUSHINADA_WITHHOLDING",
+          "targetId": "Shizumi",
+          "title": "Daisy Finn on Shizumi Kushinada",
+          "text": "About Shizumi? We haven't spoken that much."
+        },
+        {
+          "id": "DAISY_SHIZUMI_KUSHINADA_HUMAN_SIDE",
+          "targetId": "Shizumi",
+          "title": "Daisy Finn on Shizumi Kushinada",
+          "text": "Shizumi? She seems pretty reserved, almost like she's trying not to offend anyone. It kind of irritates me."
+        },
+        {
+          "id": "DAISY_SHIZUMI_KUSHINADA_NEEDS_MONEY",
+          "targetId": "Shizumi",
+          "title": "Daisy Finn on Shizumi Kushinada",
+          "text": "Do I know anything about Shizumi? I overheard her talking about her needing some money for equipment, I'd be wary of her."
+        },
+        {
+          "id": "DAISY_SEBES_YORKE_OLD",
+          "targetId": "Sebes",
+          "title": "Daisy Finn on Sebes Yorke",
+          "text": "Sebes? He's like as old as my dad. His smile makes me uneasy."
+        },
+        {
+          "id": "DAISY_SEBES_YORKE_ANGRY",
+          "targetId": "Sebes",
+          "title": "Daisy Finn on Sebes Yorke",
+          "text": "I was listening to Sebes rant about how he's losing customers at his bar, he sounded furious."
+        },
+        {
+          "id": "DAISY_SEBES_YORKE_ANIMAL_SIDE",
+          "targetId": "Sebes",
+          "title": "Daisy Finn on Sebes Yorke",
+          "text": "Sebes? He seems like someone who'd stop at nothing to reach his goals."
+        },
+        {
+          "id": "DAISY_SEBES_YORKE_NEEDS_MONEY",
+          "targetId": "Sebes",
+          "title": "Daisy Finn on Sebes Yorke",
+          "text": "I was talking to Sebes about the werewolf. He seemed more interested in the bounty than anything else."
+        },
+        {
+          "id": "DAISY_SEBES_YORKE_HAS_TO_STAY",
+          "targetId": "Sebes",
+          "title": "Daisy Finn on Sebes Yorke",
+          "text": "About Sebes? He seemed really interested in the reward for capturing the werewolf, but I don't think he's as well equipped as you."
+        },
+        {
+          "id": "DAISY_ELARA_VENN_OLD",
+          "targetId": "Elara",
+          "title": "Daisy Finn on Elara Venn",
+          "text": "Elara? She's old enough to be my grandma. She's really nice, but kind of nosy."
+        },
+        {
+          "id": "DAISY_ELARA_VENN_ANGRY",
+          "targetId": "Elara",
+          "title": "Daisy Finn on Elara Venn",
+          "text": "Elara? I accidentally broke one of the plates in the kitchen and she looked like she was about to explode! I got out of there as soon as I could."
+        },
+        {
+          "id": "DAISY_ELARA_VENN_ANIMAL_SIDE",
+          "targetId": "Elara",
+          "title": "Daisy Finn on Elara Venn",
+          "text": "Elara? She seems really sensitive to noises and things being out of place. I guess it comes with being here her whole life."
+        },
+        {
+          "id": "DAISY_ELARA_VENN_CARRYING_TOO_MUCH",
+          "targetId": "Elara",
+          "title": "Daisy Finn on Elara Venn",
+          "text": "I always see Elara carrying way more bedding than she looks like she can handle. I have no idea how she does it."
+        },
+        {
+          "id": "DAISY_ELARA_VENN_HAS_TO_STAY",
+          "targetId": "Elara",
+          "title": "Daisy Finn on Elara Venn",
+          "text": "Having to stay at this mansion during all of this must be taxing. I hope she's doing okay."
+        }
       ],
       "day2": [
         "I didn’t do it!",
@@ -38,22 +166,786 @@
         "You have to believe me!"
       ],
       "accusation": [
-        "Are you crazy??!",
-        "I told you already, I didn’t kill him!",
-        "I’m not a murderer, I wouldn’t even know what to do with a bunch of tools!",
-        "Please, you have to believe me!"
+        "Seriously?",
+        "You think wanting out of this place makes me the werewolf?",
+        "Yeah, I sneak around and take things I shouldn't, but I don't kill people.",
+        "Put the weapon down and look for someone who actually wants to be here."
+      ],
+      "werewolfAccusation": [
+        "You just couldn't stop cornering me, could you?",
+        "I warned everyone that I act on instinct when I'm trapped.",
+        "Now let's see if yours is fast enough to save you."
+      ]
+    },
+    {
+      "id": "Elara",
+      "displayName": "Elara Venn",
+      "identity": "Head of Housekeeping",
+      "traits": [
+        "Old",
+        "Angry",
+        "AnimalSide",
+        "CarryingTooMuch",
+        "HasToStay"
+      ],
+      "introduction": [
+        "Welcome to the mansion. I am Elara, the head of housekeeping for the estate. I guide the staff that prepare the rooms and maintain the house. I’d prefer to stay out of the guests’ conflicts, but I do know these halls better than anyone else. Let me know if your room needs cleaning, and I’ll get on it right away."
+      ],
+      "dailyGreetings": [
+        "Please mind the rugs. I’ve just finished cleaning that hall.",
+        "I’ve checked the doors I can reach.",
+        "Someone opened a passage after the house was settled for the night.",
+        "The mansion is less secure than I’d like.",
+        "Stay where I can find you. I will not have anyone wandering off alone."
+      ],
+      "clueDialogue": {
+        "saw": "I noticed [evidence] at [place]. I know what that room looked like before.",
+        "heard": "I heard [sound or detail] after the house was meant to be quiet.",
+        "found": "I found [evidence] while making my rounds. It should not have been there.",
+        "inferred": "I know these halls. Someone disturbed that area after it had been cleaned."
+      },
+      "facts": [
+        {
+          "id": "ELARA_SELF_ANGRY",
+          "targetId": "",
+          "title": "About Elara Venn",
+          "text": "Please don't make any messes that you can't clean up yourself. I've already had to deal with many messes today and would hate to deal with one more."
+        },
+        {
+          "id": "ELARA_SELF_ANIMAL_SIDE",
+          "targetId": "",
+          "title": "About Elara Venn",
+          "text": "I know almost every sound that this mansion makes. I'll notice the slightest variation."
+        },
+        {
+          "id": "ELARA_SELF_OVERBURDENED",
+          "targetId": "",
+          "title": "About Elara Venn",
+          "text": "Sometimes I feel like I should distribute my work more. I have a key for each door, a list for each room, worry for each guest; it just never stops. Maybe I'm at the age where I need more assistants."
+        },
+        {
+          "id": "ELARA_SELF_HAS_TO_STAY",
+          "targetId": "",
+          "title": "About Elara Venn",
+          "text": "Do I want to leave? Not really. I'm responsible for everyone under this roof. I'll stay until they're safe, if it's the last thing I do."
+        },
+        {
+          "id": "ELARA_DAISY_FINN_YOUNG",
+          "targetId": "Daisy",
+          "title": "Elara Venn on Daisy Finn",
+          "text": "I worry about Daisy. She is so young. I remember when I was her age and always getting into trouble."
+        },
+        {
+          "id": "ELARA_DAISY_FINN_ANGRY",
+          "targetId": "Daisy",
+          "title": "Elara Venn on Daisy Finn",
+          "text": "Daisy is always kind of short with people. I want to make sure she's comfortable, but she doesn't seem to like other people."
+        },
+        {
+          "id": "ELARA_DAISY_FINN_ANIMAL_SIDE",
+          "targetId": "Daisy",
+          "title": "Elara Venn on Daisy Finn",
+          "text": "[Draft needed.]"
+        },
+        {
+          "id": "ELARA_DAISY_FINN_NEEDS_MONEY",
+          "targetId": "Daisy",
+          "title": "Elara Venn on Daisy Finn",
+          "text": "I caught Daisy trying to break into one of the safes. I didn't take her as the type to steal."
+        },
+        {
+          "id": "ELARA_DAISY_FINN_WANTS_TO_LEAVE",
+          "targetId": "Daisy",
+          "title": "Elara Venn on Daisy Finn",
+          "text": "I know Daisy wants to leave as soon as possible. I want to make sure that she's comfortable as long as she's staying."
+        },
+        {
+          "id": "ELARA_PELL_VENNE_YOUNG",
+          "targetId": "Pell",
+          "title": "Elara Venn on Pell Venne",
+          "text": "About Pell? He's so smart for his age. He's always asking me about what remedies I have in stock."
+        },
+        {
+          "id": "ELARA_PELL_VENNE_WITHHOLDING",
+          "targetId": "Pell",
+          "title": "Elara Venn on Pell Venne",
+          "text": "Pell? He probably won't tell you much about his past unless he knows you more."
+        },
+        {
+          "id": "ELARA_PELL_VENNE_HUMAN_SIDE",
+          "targetId": "Pell",
+          "title": "Elara Venn on Pell Venne",
+          "text": "Pell has a strong urge to care for people in need. It's almost to a fault."
+        },
+        {
+          "id": "ELARA_PELL_VENNE_CARRYING_TOO_MUCH",
+          "targetId": "Pell",
+          "title": "Elara Venn on Pell Venne",
+          "text": "I always hear Pell coming; all of his bottles make so much noise."
+        },
+        {
+          "id": "ELARA_PELL_VENNE_HAS_TO_STAY",
+          "targetId": "Pell",
+          "title": "Elara Venn on Pell Venne",
+          "text": "I feel bad for Pell. He came here to help restock the medicine and ended up stuck in here with everyone else."
+        },
+        {
+          "id": "ELARA_ROWAN_HALE_YOUNG",
+          "targetId": "Rowan",
+          "title": "Elara Venn on Rowan Hale",
+          "text": "Rowan? He's... a nice young man. Very chatty."
+        },
+        {
+          "id": "ELARA_ROWAN_HALE_WITHHOLDING",
+          "targetId": "Rowan",
+          "title": "Elara Venn on Rowan Hale",
+          "text": "Oh Rowan? He's very talkative, but doesn't like to talk about his past that much."
+        },
+        {
+          "id": "ELARA_ROWAN_HALE_ANIMAL_SIDE",
+          "targetId": "Rowan",
+          "title": "Elara Venn on Rowan Hale",
+          "text": "Rowan seems like the type of young man to run into danger with a smile just to learn more. I worry about him sometimes."
+        },
+        {
+          "id": "ELARA_ROWAN_HALE_NEEDS_MONEY",
+          "targetId": "Rowan",
+          "title": "Elara Venn on Rowan Hale",
+          "text": "Rowan? He's always telling me about his research, but I think he's barely making ends meet."
+        },
+        {
+          "id": "ELARA_ROWAN_HALE_WANTS_TO_LEAVE",
+          "targetId": "Rowan",
+          "title": "Elara Venn on Rowan Hale",
+          "text": "I know Rowan wants to get out of here as soon as possible. It'd really be for the best."
+        }
+      ],
+      "day2": [
+        "Mr. Palmer was nothing but kind to me and the staff.",
+        "To see a guest’s life taken so violently in these halls is deeply unsettling.",
+        "Please, hunter, find the person responsible for this."
+      ],
+      "accusation": [
+        "Mind where you point that weapon, hunter.",
+        "I know every loose board and hidden passage in this house because caring for it is my responsibility, not because I stalk its guests.",
+        "If you mistake vigilance for guilt, you will leave the real danger free to make another mess of my home."
+      ],
+      "werewolfAccusation": [
+        "I have guarded this house for most of my life.",
+        "I know which doors hide secrets, which halls swallow screams, and which guests will not be missed.",
+        "You should not have challenged the mistress of these halls in her own home."
+      ]
+    },
+    {
+      "id": "Mataba",
+      "displayName": "Mataba Eiji",
+      "identity": "Gang Leader",
+      "traits": [
+        "Old",
+        "Angry",
+        "AnimalSide",
+        "NeedsMoney",
+        "WantsToLeave"
+      ],
+      "introduction": [
+        "The name's Eiji Mataba. I came to this town looking for clues about my father. The storm's trapped me here, so I'll make use of the time. You catch the werewolf; I'll keep looking for what I came here for."
+      ],
+      "dailyGreetings": [
+        "I’m leaving as soon as the storm clears.",
+        "Being trapped here is keeping me from what I came to find.",
+        "Someone’s been through my belongings. Ask before you touch them.",
+        "If that thing gets near anyone here, I’ll deal with it.",
+        "I still mean to leave. I’m just not leaving anyone behind."
+      ],
+      "clueDialogue": {
+        "saw": "I saw [evidence] near [place]. I didn’t stick around to see what made it.",
+        "heard": "I heard [sound or detail] last night. It was close enough that I kept watch.",
+        "found": "I found [evidence]. I left it where it was.",
+        "inferred": "That looks like someone was trying to get somewhere—or get away from something."
+      },
+      "facts": [
+        {
+          "id": "MATABA_SELF_ANGRY",
+          "targetId": "",
+          "title": "About Mataba Eiji",
+          "text": "If anyone disrespects me or my family, I don't know if I'd be able to hold back."
+        },
+        {
+          "id": "MATABA_SELF_ANIMAL_SIDE",
+          "targetId": "",
+          "title": "About Mataba Eiji",
+          "text": "When someone or something I care about is threatened, I don't stand around. Sometimes I find myself taking action before thinking."
+        },
+        {
+          "id": "MATABA_SELF_NEEDS_MONEY",
+          "targetId": "",
+          "title": "About Mataba Eiji",
+          "text": "If my father left something here for me, I'll find it. I need a way to start over."
+        },
+        {
+          "id": "MATABA_SELF_WANTS_TO_LEAVE",
+          "targetId": "",
+          "title": "About Mataba Eiji",
+          "text": "When this all settles, I'm leaving. What I'm looking for isn't here."
+        },
+        {
+          "id": "MATABA_SEBES_YORKE_OLD",
+          "targetId": "Sebes",
+          "title": "Mataba Eiji on Sebes Yorke",
+          "text": "Sebes? I didn't expect him to be much older than me, but I think he's about 40 or so. I wonder if he knows anything about my father."
+        },
+        {
+          "id": "MATABA_SEBES_YORKE_ANGRY",
+          "targetId": "Sebes",
+          "title": "Mataba Eiji on Sebes Yorke",
+          "text": "How Sebes treats other people... like tools. It reminds me of some of the people I used to know. They didn't end up well."
+        },
+        {
+          "id": "MATABA_SEBES_YORKE_ANIMAL_SIDE",
+          "targetId": "Sebes",
+          "title": "Mataba Eiji on Sebes Yorke",
+          "text": "Sebes is similar to me, someone who works towards a goal to no end."
+        },
+        {
+          "id": "MATABA_SEBES_YORKE_NEEDS_MONEY",
+          "targetId": "Sebes",
+          "title": "Mataba Eiji on Sebes Yorke",
+          "text": "I mentioned an inheritance to Sebes and he immediately perked up. It was a little unsettling."
+        },
+        {
+          "id": "MATABA_SEBES_YORKE_HAS_TO_STAY",
+          "targetId": "Sebes",
+          "title": "Mataba Eiji on Sebes Yorke",
+          "text": "Sebes mentioned a bounty to me, but I'm not interested. He certainly seems like he has a good reason to stay around here."
+        },
+        {
+          "id": "MATABA_SHIZUMI_KUSHINADA_YOUNG",
+          "targetId": "Shizumi",
+          "title": "Mataba Eiji on Shizumi Kushinada",
+          "text": "Shizumi? I don't know much about her, but she seems about as old as my younger sister."
+        },
+        {
+          "id": "MATABA_SHIZUMI_KUSHINADA_WITHHOLDING",
+          "targetId": "Shizumi",
+          "title": "Mataba Eiji on Shizumi Kushinada",
+          "text": "I asked Shizumi if she knew anything about the lake. She seems like the type to hold her tongue to not offend anyone."
+        },
+        {
+          "id": "MATABA_SHIZUMI_KUSHINADA_HUMAN_SIDE",
+          "targetId": "Shizumi",
+          "title": "Mataba Eiji on Shizumi Kushinada",
+          "text": "Shizumi seems very down to earth. I like some of the photos she's taken, especially those of her pets."
+        },
+        {
+          "id": "MATABA_SHIZUMI_KUSHINADA_NEEDS_MONEY",
+          "targetId": "Shizumi",
+          "title": "Mataba Eiji on Shizumi Kushinada",
+          "text": "I spoke with Shizumi this morning, and she mentioned something about how much winning this competition of hers would mean to her."
+        },
+        {
+          "id": "MATABA_SHIZUMI_KUSHINADA_WANTS_TO_LEAVE",
+          "targetId": "Shizumi",
+          "title": "Mataba Eiji on Shizumi Kushinada",
+          "text": "I know Shizumi has a deadline coming up. We both have no intention of staying here any longer than necessary, hunter."
+        },
+        {
+          "id": "MATABA_HAROLD_PALMER_OLD",
+          "targetId": "Harold",
+          "title": "Mataba Eiji on Harold Palmer",
+          "text": "Harold? I respect him. Working on something for that long takes dedication and passion."
+        },
+        {
+          "id": "MATABA_HAROLD_PALMER_WITHHOLDING",
+          "targetId": "Harold",
+          "title": "Mataba Eiji on Harold Palmer",
+          "text": "I don't know Harold that well; we met at this mansion. He hasn't told me much about himself, but in due time I'm sure we'd get along."
+        },
+        {
+          "id": "MATABA_HAROLD_PALMER_HUMAN_SIDE",
+          "targetId": "Harold",
+          "title": "Mataba Eiji on Harold Palmer",
+          "text": "Harold is a kind soul. He approached me even when I seemed a bit frustrated and wanted to make sure I was doing alright."
+        },
+        {
+          "id": "MATABA_HAROLD_PALMER_CARRYING_TOO_MUCH",
+          "targetId": "Harold",
+          "title": "Mataba Eiji on Harold Palmer",
+          "text": "I don't know how an old man like Harold can carry all of that. It's almost remarkable."
+        },
+        {
+          "id": "MATABA_HAROLD_PALMER_HAS_TO_STAY",
+          "targetId": "Harold",
+          "title": "Mataba Eiji on Harold Palmer",
+          "text": "Harold is here to tune the clocks in the mansion. I don't think he's really in a rush to get out of here. Hell, I don't really know the danger that we're all in either."
+        }
+      ],
+      "day2": [],
+      "accusation": [
+        "You think I'm the beast?",
+        "I've spent my life looking for the men who took my father, so I know what blind anger can do to a person.",
+        "But I won't become another monster just to settle a score.",
+        "Lower the weapon and judge me by what I've done, not by how dangerous I look."
+      ],
+      "werewolfAccusation": [
+        "I spent years hunting monsters and never considered that I might become one.",
+        "Turns out strength is simpler when you stop pretending to be gentle.",
+        "Come on, hunter. Show me whether your resolve is stronger than mine."
+      ]
+    },
+    {
+      "id": "Rowan",
+      "displayName": "Rowan Hale",
+      "identity": "Folklore Researcher",
+      "traits": [
+        "Young",
+        "Withholding",
+        "AnimalSide",
+        "NeedsMoney",
+        "WantsToLeave"
+      ],
+      "introduction": [
+        "Hi, hunter! It's nice to meet you. My name is Rowan. I do research on the folklore surrounding this village. I heard you were looking for a werewolf here. I'd love to be able to study it, alive or dead~"
+      ],
+      "dailyGreetings": [
+        "What a remarkable place to be trapped! So many local legends to consider.",
+        "The wind is making some very convincing noises tonight.",
+        "I’ve heard that sound before, though I can’t place where.",
+        "The stories are starting to sound less like stories.",
+        "We need proof soon. I’m not sure how much longer I can keep guessing."
+      ],
+      "clueDialogue": {
+        "saw": "I observed [evidence] at [place]. A fascinating detail, potentially consistent with local accounts.",
+        "heard": "I heard [sound or detail] during the night. It may support one of the older stories.",
+        "found": "I found [evidence] while following a lead. I assure you, the detour was methodical.",
+        "inferred": "Taken with [other detail], this suggests [evidence] may be connected to the creature’s behavior."
+      },
+      "facts": [
+        {
+          "id": "ROWAN_SELF_WITHHOLDING",
+          "targetId": "",
+          "title": "About Rowan Hale",
+          "text": "You want to know more about me? Hmm... How about I tell you about some of the creatures I've been researching instead!"
+        },
+        {
+          "id": "ROWAN_SELF_ANIMAL_SIDE",
+          "targetId": "",
+          "title": "About Rowan Hale",
+          "text": "I can't stop myself from following a trail, even if it seems dangerous..."
+        },
+        {
+          "id": "ROWAN_SELF_NEEDS_MONEY",
+          "targetId": "",
+          "title": "About Rowan Hale",
+          "text": "Studying this werewolf would be nice... I bet I'd make a lot of money studying its biological makeup."
+        },
+        {
+          "id": "ROWAN_SELF_WANTS_TO_LEAVE",
+          "targetId": "",
+          "title": "About Rowan Hale",
+          "text": "While this werewolf is interesting, I can't stand being cooped up in here. The forest calls me, and I must answer."
+        },
+        {
+          "id": "ROWAN_ELARA_VENN_OLD",
+          "targetId": "Elara",
+          "title": "Rowan Hale on Elara Venn",
+          "text": "Oh Elara? I've known her since I was a kid. She's like a second grandma to me! I love talking to her about the books in the mansion's library."
+        },
+        {
+          "id": "ROWAN_ELARA_VENN_ANGRY",
+          "targetId": "Elara",
+          "title": "Rowan Hale on Elara Venn",
+          "text": "Elara? Be sure not to get on her bad side. I accidentally knocked over one of the shelves in the library and she had me cleaning for weeks..."
+        },
+        {
+          "id": "ROWAN_ELARA_VENN_ANIMAL_SIDE",
+          "targetId": "Elara",
+          "title": "Rowan Hale on Elara Venn",
+          "text": "I'm so jealous of Elara's ability to find things. It's like she has a sixth sense! I'm sure it'd come in handy when I'm in the field."
+        },
+        {
+          "id": "ROWAN_ELARA_VENN_CARRYING_TOO_MUCH",
+          "targetId": "Elara",
+          "title": "Rowan Hale on Elara Venn",
+          "text": "I always notice Elara taking on so much work. She has people who can help, but always seems to want to carry the burden herself."
+        },
+        {
+          "id": "ROWAN_ELARA_VENN_HAS_TO_STAY",
+          "targetId": "Elara",
+          "title": "Rowan Hale on Elara Venn",
+          "text": "I know Elara has good reason to stay here. She's worked here her whole life! I respect the loyalty to doing what she loves."
+        },
+        {
+          "id": "ROWAN_PERCY_NORN_YOUNG",
+          "targetId": "Percy",
+          "title": "Rowan Hale on Percy Norn",
+          "text": "Percy? He's my age. He always talks like he's so much older than me, though. He's like an older brother to me."
+        },
+        {
+          "id": "ROWAN_PERCY_NORN_WITHHOLDING",
+          "targetId": "Percy",
+          "title": "Rowan Hale on Percy Norn",
+          "text": "Oh Percy? He's really not the warmest person until you get to know him. You should see him drunk; he'll crack jokes left and right."
+        },
+        {
+          "id": "ROWAN_PERCY_NORN_HUMAN_SIDE",
+          "targetId": "Percy",
+          "title": "Rowan Hale on Percy Norn",
+          "text": "I'm grateful for Percy. He's always willing to help out those in need. I'm kind of forgetful, and he's always there if I need something."
+        },
+        {
+          "id": "ROWAN_PERCY_NORN_CARRYING_TOO_MUCH",
+          "targetId": "Percy",
+          "title": "Rowan Hale on Percy Norn",
+          "text": "I don't know how Percy can carry all of his tools around. We'll go on hikes and I'll have to slow down because he's burdened with all of the tools on his belt."
+        },
+        {
+          "id": "ROWAN_PERCY_NORN_WANTS_TO_LEAVE",
+          "targetId": "Percy",
+          "title": "Rowan Hale on Percy Norn",
+          "text": "I know Percy wants to get out of here just as much as I do. He's like me and can't sit still when there are things to do."
+        },
+        {
+          "id": "ROWAN_PELL_VENNE_YOUNG",
+          "targetId": "Pell",
+          "title": "Rowan Hale on Pell Venne",
+          "text": "Pell? We actually have the same birthday! He's a year older than me, but we've been friends for a while."
+        },
+        {
+          "id": "ROWAN_PELL_VENNE_WITHHOLDING",
+          "targetId": "Pell",
+          "title": "Rowan Hale on Pell Venne",
+          "text": "I don't think I get along super well with Pell. He doesn't talk about himself a lot, but he's pretty friendly."
+        },
+        {
+          "id": "ROWAN_PELL_VENNE_HUMAN_SIDE",
+          "targetId": "Pell",
+          "title": "Rowan Hale on Pell Venne",
+          "text": "About Pell? He's a really dependable guy. The type of guy who'd come to your rescue just because you were in trouble."
+        },
+        {
+          "id": "ROWAN_PELL_VENNE_CARRYING_TOO_MUCH",
+          "targetId": "Pell",
+          "title": "Rowan Hale on Pell Venne",
+          "text": "Sometimes I look at Pell's bag and wonder what any of this medicine does. Like, do you really need all of this? When's the last time you've seen someone and been, \"Oh! I know exactly what this needs,\" and pulled out some random leaf?"
+        },
+        {
+          "id": "ROWAN_PELL_VENNE_HAS_TO_STAY",
+          "targetId": "Pell",
+          "title": "Rowan Hale on Pell Venne",
+          "text": "Pell's someone who can't stand to see danger and not rush to intervene. He's a very simple guy in a sense."
+        }
+      ],
+      "day2": [],
+      "accusation": [
+        "Me?",
+        "I admit that pursuing a real werewolf sounded considerably more exciting before people started dying.",
+        "But if I were hiding a transformation, documenting every clue for you would be a spectacularly poor strategy.",
+        "Please reconsider before you turn this investigation into its final cautionary tale."
+      ],
+      "werewolfAccusation": [
+        "To observe a legend from within its own skin is an opportunity no researcher could refuse.",
+        "I left you the clues because every great discovery deserves a worthy witness.",
+        "Unfortunately, witnesses are not the same thing as survivors."
+      ]
+    },
+    {
+      "id": "Pell",
+      "displayName": "Pell Venne",
+      "identity": "Doctor/Botanist/Herbologist",
+      "traits": [
+        "Young",
+        "Withholding",
+        "HumanSide",
+        "CarryingTooMuch",
+        "HasToStay"
+      ],
+      "introduction": [
+        "What's up! I'm Pell. You must be the hunter I've been hearing about! Let me know if you need any help stringing up this werewolf; I don't want anyone else to get hurt."
+      ],
+      "dailyGreetings": [
+        "Let me know if you feel ill or hurt. Don’t wait until it gets worse.",
+        "I’m keeping an eye on the medicine supplies.",
+        "Everyone’s looking more tired today. Try to rest when you can.",
+        "I can’t help if people keep hiding their injuries from me.",
+        "Stay close to the others tonight. Please."
+      ],
+      "clueDialogue": {
+        "saw": "I saw [evidence] at [place]. I wanted to make sure nobody was hurt before I called you.",
+        "heard": "I heard [sound or detail] nearby. I checked for injuries, but I couldn’t find anyone.",
+        "found": "I found [evidence] while gathering supplies. Please be careful around it.",
+        "inferred": "The pattern of [evidence] suggests someone was frightened or acting in haste."
+      },
+      "facts": [
+        {
+          "id": "PELL_SELF_CALM_WITHHOLDING",
+          "targetId": "",
+          "title": "About Pell Venne",
+          "text": "I've dealt with beasts in the woods before. What kind? It's not important. Anyway, are you feeling okay? You look a little warm."
+        },
+        {
+          "id": "PELL_SELF_HUMAN_SIDE",
+          "targetId": "",
+          "title": "About Pell Venne",
+          "text": "I treat whoever's in front of me, good or bad. Whatever else they may be, they still need help."
+        },
+        {
+          "id": "PELL_SELF_CARRYING_TOO_MUCH",
+          "targetId": "",
+          "title": "About Pell Venne",
+          "text": "I brought enough medicine to restock the mansion, but it might've been too much... This bag of mine never seems to get lighter these days."
+        },
+        {
+          "id": "PELL_SELF_HAS_WANTS_TO_STAY",
+          "targetId": "",
+          "title": "About Pell Venne",
+          "text": "Even if there was a way to get out, I could never leave knowing that other people might get hurt."
+        },
+        {
+          "id": "PELL_ELARA_VENN_OLD",
+          "targetId": "Elara",
+          "title": "Pell Venne on Elara Venn",
+          "text": "I hope Elara takes care of herself. Usually I see people her age start to slow down, but she keeps working."
+        },
+        {
+          "id": "PELL_ELARA_VENN_ANGRY",
+          "targetId": "Elara",
+          "title": "Pell Venne on Elara Venn",
+          "text": "You don't want to get on Elara's bad side. She's pretty scary when you make a mess somewhere that she just cleaned... from experience."
+        },
+        {
+          "id": "PELL_ELARA_VENN_ANIMAL_SIDE",
+          "targetId": "Elara",
+          "title": "Pell Venne on Elara Venn",
+          "text": "Elara is super keen. I remember when I was little I tried sneaking up on her, and she knew it was me without even turning around!"
+        },
+        {
+          "id": "PELL_ELARA_VENN_CARRYING_TOO_MUCH",
+          "targetId": "Elara",
+          "title": "Pell Venne on Elara Venn",
+          "text": "I always see Elara busy with her work. I think she takes too much on herself. I would love to help her, but don't want to be disrespectful."
+        },
+        {
+          "id": "PELL_ELARA_VENN_HAS_TO_STAY",
+          "targetId": "Elara",
+          "title": "Pell Venne on Elara Venn",
+          "text": "I wonder how Elara feels right now. She must be worried with this werewolf running loose in her mansion. I hope that we can eliminate the threat quickly."
+        },
+        {
+          "id": "PELL_PERCY_NORN_YOUNG",
+          "targetId": "Percy",
+          "title": "Pell Venne on Percy Norn",
+          "text": "Percy? He's around my age. We've been friends since we were kids; he's always so serious compared to Rowan and me. Even though he's only a few years older than me, he acts like he's 50 sometimes."
+        },
+        {
+          "id": "PELL_PERCY_NORN_WITHHOLDING",
+          "targetId": "Percy",
+          "title": "Pell Venne on Percy Norn",
+          "text": "Oh Percy? He's not the kindest to strangers, but he's a really nice guy once you get to know him. I'm proud to have him as a friend."
+        },
+        {
+          "id": "PELL_PERCY_NORN_HUMAN_SIDE",
+          "targetId": "Percy",
+          "title": "Pell Venne on Percy Norn",
+          "text": "About Percy? Hmm... one time he stayed up all night fixing a little boy's broken toy. I admire his resolve."
+        },
+        {
+          "id": "PELL_PERCY_NORN_CARRYING_TOO_MUCH",
+          "targetId": "Percy",
+          "title": "Pell Venne on Percy Norn",
+          "text": "Whenever Percy and I go out he always takes a long time putting away his tools. I guess you can never be too careful, but it gets to a point, you know?"
+        },
+        {
+          "id": "PELL_PERCY_NORN_WANTS_TO_LEAVE",
+          "targetId": "Percy",
+          "title": "Pell Venne on Percy Norn",
+          "text": "Percy keeps asking me if I know anything about the status of the werewolf. He seems like he really misses his work."
+        },
+        {
+          "id": "PELL_ROWAN_HALE_YOUNG",
+          "targetId": "Rowan",
+          "title": "Pell Venne on Rowan Hale",
+          "text": "Oh Rowan? Yeah, he's my age. He's a little... interesting, to say the least, but I don't have a problem with him."
+        },
+        {
+          "id": "PELL_ROWAN_HALE_WITHHOLDING",
+          "targetId": "Rowan",
+          "title": "Pell Venne on Rowan Hale",
+          "text": "Rowan doesn't like to talk a lot about himself. If you ask him about what he's researching he'll talk at you for hours though... don't ask."
+        },
+        {
+          "id": "PELL_ROWAN_HALE_ANIMAL_SIDE",
+          "targetId": "Rowan",
+          "title": "Pell Venne on Rowan Hale",
+          "text": "Rowan is very... ambitious. I think we're similar in a sense that we're always very goal-driven, but for different reasons."
+        },
+        {
+          "id": "PELL_ROWAN_HALE_NEEDS_MONEY",
+          "targetId": "Rowan",
+          "title": "Pell Venne on Rowan Hale",
+          "text": "Oh Rowan? He always makes me pay for his meals when we go out at night. I don't think his research pays well, but I respect someone with that much ambition. On the other hand, my wallet doesn't."
+        },
+        {
+          "id": "PELL_ROWAN_HALE_WANTS_TO_LEAVE",
+          "targetId": "Rowan",
+          "title": "Pell Venne on Rowan Hale",
+          "text": "Rowan seems really antsy recently. I know he's interested in the werewolf, but he's not the type of guy who's able to stay in one place for this long."
+        }
+      ],
+      "day2": [],
+      "accusation": [
+        "If you truly believe it's me, I won't pretend that fear makes you cruel.",
+        "But I've stayed because injured people need a doctor, even when they refuse to admit it.",
+        "Killing me won't heal anyone, and it won't stop the real werewolf.",
+        "Please take one more look at the evidence."
+      ],
+      "werewolfAccusation": [
+        "I tried herbs, tinctures, every remedy I knew.",
+        "Nothing cured the hunger, so I learned to manage it instead.",
+        "I'm sorry, hunter. I really did want everyone to survive."
       ]
     },
     {
       "id": "Sebes",
       "displayName": "Sebes Yorke",
-      "identity": "Hunter (self-described).",
-      "day1": [
-        "A monster hunter, eh?",
-        "The name’s Sebes Yorke.",
-        "You may have heard of me, I’m somewhat of a hunter myself.",
-        "I hear there’s a hefty bounty on this werewolf, if you want to team up and split the profits, I’m your guy.",
-        "I’m always looking to make some quick cash."
+      "identity": "Barkeep",
+      "traits": [
+        "Old",
+        "Angry",
+        "AnimalSide",
+        "NeedsMoney",
+        "HasToStay"
+      ],
+      "introduction": [
+        "A monster hunter, eh? The name’s Sebes Yorke. You may have heard of me, I’m somewhat of a hunter myself. I hear there’s a hefty bounty on this werewolf. If you want to team up and split the profits, I’m your guy. I’m always looking to make some quick cash."
+      ],
+      "dailyGreetings": [
+        "Storm’s keeping everyone here. Might as well make the best of it.",
+        "I wonder if the bounty gets bigger when the beast gets bolder.",
+        "Everyone’s watching everyone else. That’s bad for business.",
+        "Keep your hands off my things and we’ll get along.",
+        "If that thing comes through the door, I’m not waiting around to negotiate."
+      ],
+      "clueDialogue": {
+        "saw": "I saw [evidence] near [place]. I left it untouched—no reason to put my fingerprints on anything.",
+        "heard": "I heard someone mention [detail]. People talk when they think nobody important is listening.",
+        "found": "I found [evidence]. If there’s a reward for it, I expect a share.",
+        "inferred": "People don’t act like that without a reason. [Evidence] points to someone with something to gain."
+      },
+      "facts": [
+        {
+          "id": "SEBES_SELF_ANGRY",
+          "targetId": "",
+          "title": "About Sebes Yorke",
+          "text": "You think I'm angry? I get annoyed when people waste my time, doubt my ability, or get between me and my money. Wouldn't you?"
+        },
+        {
+          "id": "SEBES_SELF_ANIMAL_SIDE",
+          "targetId": "",
+          "title": "About Sebes Yorke",
+          "text": "If I spot an opening, I rip it open. Hesitation is how you lose opportunity, lad."
+        },
+        {
+          "id": "SEBES_SELF_NEEDS_MONEY",
+          "targetId": "",
+          "title": "About Sebes Yorke",
+          "text": "This bounty would help expand my business... I might even capture it first, hunter."
+        },
+        {
+          "id": "SEBES_SELF_HAS_TO_STAY",
+          "targetId": "",
+          "title": "About Sebes Yorke",
+          "text": "Leave with an unclaimed bounty? Do you think I'm a fool?"
+        },
+        {
+          "id": "SEBES_MATABA_EIJI_OLD",
+          "targetId": "Mataba",
+          "title": "Sebes Yorke on Mataba Eiji",
+          "text": "Mataba? He seems dependable. Someone who's seen the hardships of life through the years."
+        },
+        {
+          "id": "SEBES_MATABA_EIJI_ANGRY",
+          "targetId": "Mataba",
+          "title": "Sebes Yorke on Mataba Eiji",
+          "text": "You want to know about Mataba? Hell, I hardly know him. He always seems frustrated or serious around me."
+        },
+        {
+          "id": "SEBES_MATABA_EIJI_ANIMAL_SIDE",
+          "targetId": "Mataba",
+          "title": "Sebes Yorke on Mataba Eiji",
+          "text": "Mataba? I think he's like me. It doesn't seem like he'd stop at anything to reach his goal. That could be useful..."
+        },
+        {
+          "id": "SEBES_MATABA_EIJI_NEEDS_MONEY",
+          "targetId": "Mataba",
+          "title": "Sebes Yorke on Mataba Eiji",
+          "text": "I heard Mataba's after some inheritance... I wonder if he'd be willing to split it if I helped."
+        },
+        {
+          "id": "SEBES_MATABA_EIJI_WANTS_TO_LEAVE",
+          "targetId": "Mataba",
+          "title": "Sebes Yorke on Mataba Eiji",
+          "text": "I know Mataba's looking for things near the lake. Doesn't seem like he has any reason to want to stay in the mansion."
+        },
+        {
+          "id": "SEBES_DAISY_FINN_YOUNG",
+          "targetId": "Daisy",
+          "title": "Sebes Yorke on Daisy Finn",
+          "text": "Daisy? She doesn't even look like she could enter my bar! How'd someone that young end up trapped here anyway?"
+        },
+        {
+          "id": "SEBES_DAISY_FINN_ANGRY",
+          "targetId": "Daisy",
+          "title": "Sebes Yorke on Daisy Finn",
+          "text": "I saw Daisy eyeing some of the paintings in the hall. When I went up to her she left in a fit. What was that all about?"
+        },
+        {
+          "id": "SEBES_DAISY_FINN_ANIMAL_SIDE",
+          "targetId": "Daisy",
+          "title": "Sebes Yorke on Daisy Finn",
+          "text": "Daisy seems like somebody that'd be useful—er, nice to have in the back pocket if you needed something done. Reminds me of a wounded dog."
+        },
+        {
+          "id": "SEBES_DAISY_FINN_NEEDS_MONEY",
+          "targetId": "Daisy",
+          "title": "Sebes Yorke on Daisy Finn",
+          "text": "Heard Daisy's here looking for valuables. I wonder if she'd be interested in trying to split some of the profit."
+        },
+        {
+          "id": "SEBES_DAISY_FINN_WANTS_TO_LEAVE",
+          "targetId": "Daisy",
+          "title": "Sebes Yorke on Daisy Finn",
+          "text": "Saw Daisy trying to get out through the attic. It didn't work, but she seems eager to try and get out. I pity her."
+        },
+        {
+          "id": "SEBES_MARCO_ALBIZU_OLD",
+          "targetId": "Marco",
+          "title": "Sebes Yorke on Marco Albizu",
+          "text": "Marco? That bastard has been a thorn in my side since I started my business many years ago."
+        },
+        {
+          "id": "SEBES_MARCO_ALBIZU_ANGRY",
+          "targetId": "Marco",
+          "title": "Sebes Yorke on Marco Albizu",
+          "text": "Ever since Marco refused to supply my bar with produce we haven't been on the best terms. He's always hostile when we speak; I don't like him at all."
+        },
+        {
+          "id": "SEBES_MARCO_ALBIZU_HUMAN_SIDE",
+          "targetId": "Marco",
+          "title": "Sebes Yorke on Marco Albizu",
+          "text": "While I don't agree with Marco on things, he's always been a kind man. I hear of him often at the bar from the townspeople."
+        },
+        {
+          "id": "SEBES_MARCO_ALBIZU_CARRYING_TOO_MUCH",
+          "targetId": "Marco",
+          "title": "Sebes Yorke on Marco Albizu",
+          "text": "I don't know how that old Marco can carry all of those vegetables. I even saw him lift an adult cow on his shoulders when he was younger."
+        },
+        {
+          "id": "SEBES_MARCO_ALBIZU_HAS_TO_STAY",
+          "targetId": "Marco",
+          "title": "Sebes Yorke on Marco Albizu",
+          "text": "Knowing Marco, he's the type to put himself in danger to protect his animals. If not for the bounty on this wolf's head, I'd be getting the hell out of here."
+        }
       ],
       "day2": [
         "A shame he’s gone.",
@@ -62,78 +954,316 @@
         "The risk has seriously gone up."
       ],
       "accusation": [
-        "This is outrageous!",
-        "I'm a businessman!",
-        "You really think I'd dirty my hands for a few bucks when there's a huge bounty on the line?",
-        "...Although, I suppose I could collect the bounty AND pawn those antique tools.",
-        "If you're going to stand between me and my payday, hunter, I'll just have to tear you apart!"
+        "After all that work, you finally decided to bare your teeth at me.",
+        "I thought I could take the bounty, let you chase the wrong trail, and leave this house richer than I entered it.",
+        "Shame.",
+        "If you're going to stand between me and my payday, hunter, I'll collect it over your body."
+      ],
+      "werewolfAccusation": [
+        "After all that work, you finally decided to bare your teeth at me.",
+        "I thought I could take the bounty, let you chase the wrong trail, and leave this house richer than I entered it.",
+        "Shame.",
+        "If you're going to stand between me and my payday, hunter, I'll collect it over your body."
       ]
     },
     {
-      "id": "Percy",
-      "displayName": "Percy Norn",
-      "identity": "Repairs hunters' equipment.",
-      "day1": [
-        "You?",
-        "A hunter?",
-        "I wouldn’t believe it with that gear.",
-        "It looks like you haven’t had an upgrade in a decade.",
-        "Who designs a gun with only one chamber?",
-        "Don’t expect me to fix it for free just because we’re stuck here together.",
-        "Well?",
-        "What are you standing around for?",
-        "My name?",
-        "Percy, but it’s irrelevant to you.",
-        "If your tools need fixing, come and find me.",
-        "Not that I care if you get yourself killed or anything."
+      "id": "Shizumi",
+      "displayName": "Shizumi Kushinada",
+      "identity": "Highschool Student",
+      "traits": [
+        "Young",
+        "Withholding",
+        "HumanSide",
+        "NeedsMoney",
+        "WantsToLeave"
       ],
-      "day2": [
-        "Damn it… that old man didn’t deserve that.",
-        "And whoever took all his tools, for what?",
-        "That beast wouldn’t even know how to hold a clockmaker’s screwdriver correctly.",
-        "Look, just figure out who did this, alright?",
-        "Don’t make me forge a silver weapon myself and do your job for you."
+      "introduction": [
+        "Hi, I'm Shizumi. I came to this town to take pictures of the lake and ended up getting stuck in here along with all of you. I really like your outfit, can I take a picture?"
       ],
+      "dailyGreetings": [
+        "I should take a few pictures before we leave. The snow makes everything look different.",
+        "The windows are fogging up. I hope my camera holds up.",
+        "I caught something strange in the background of one of my pictures.",
+        "I don’t think we’re the only ones moving around this house.",
+        "I want to go home. I’m done treating this like an adventure."
+      ],
+      "clueDialogue": {
+        "saw": "I caught [evidence] in a photo. It wasn’t there in yesterday’s picture.",
+        "heard": "I heard [sound or detail] near [place]. I should’ve taken a picture, but it was too dark.",
+        "found": "I was checking the room for a good angle when I noticed [evidence].",
+        "inferred": "Comparing the pictures, I think [evidence] appeared after everyone was already inside."
+      },
+      "facts": [
+        {
+          "id": "SHIZUMI_SELF_WITHHOLDING",
+          "targetId": "",
+          "title": "About Shizumi Kushinada",
+          "text": "More about me? How about I show you some pictures I've taken recently instead?"
+        },
+        {
+          "id": "SHIZUMI_SELF_HUMAN_SIDE",
+          "targetId": "",
+          "title": "About Shizumi Kushinada",
+          "text": "I like photos. They're more than just a record of what people look like, but also what they choose to do."
+        },
+        {
+          "id": "SHIZUMI_SELF_NEEDS_MONEY",
+          "targetId": "",
+          "title": "About Shizumi Kushinada",
+          "text": "I'm trying to take some more pictures of the lake for my competition. The prize money would help buy better equipment. Getting noticed is nice, but so would a new lens!"
+        },
+        {
+          "id": "SHIZUMI_SELF_WANTS_TO_LEAVE",
+          "targetId": "",
+          "title": "About Shizumi Kushinada",
+          "text": "I hope that we can get out of here soon... The deadline for the competition is in a week and it's stressing me out!"
+        },
+        {
+          "id": "SHIZUMI_MATABA_EIJI_OLD",
+          "targetId": "Mataba",
+          "title": "Shizumi Kushinada on Mataba Eiji",
+          "text": "Mataba? I don't know much about him besides he's older than he looks."
+        },
+        {
+          "id": "SHIZUMI_MATABA_EIJI_ANGRY",
+          "targetId": "Mataba",
+          "title": "Shizumi Kushinada on Mataba Eiji",
+          "text": "Mataba's nicer than he looks. He seems angry on the outside but he's actually kind. At least to me!"
+        },
+        {
+          "id": "SHIZUMI_MATABA_EIJI_ANIMAL_SIDE",
+          "targetId": "Mataba",
+          "title": "Shizumi Kushinada on Mataba Eiji",
+          "text": "Mataba told me a bit of his past. He seems like he's always in pursuit of something, and can't sit still without a goal."
+        },
+        {
+          "id": "SHIZUMI_MATABA_EIJI_NEEDS_MONEY",
+          "targetId": "Mataba",
+          "title": "Shizumi Kushinada on Mataba Eiji",
+          "text": "I think Mataba's looking for something near this town. Something about an inheritance? He was asking me about what I knew of the lake earlier this morning."
+        },
+        {
+          "id": "SHIZUMI_MATABA_EIJI_WANTS_TO_LEAVE",
+          "targetId": "Mataba",
+          "title": "Shizumi Kushinada on Mataba Eiji",
+          "text": "I can tell Mataba wants to get out of here just as much as I do. We both have business outside the mansion, and I wanna get home!"
+        },
+        {
+          "id": "SHIZUMI_DAISY_FINN_YOUNG",
+          "targetId": "Daisy",
+          "title": "Shizumi Kushinada on Daisy Finn",
+          "text": "Daisy? I think she goes to the same school as I do! I don't know her as well as I want to, but she seems cool!"
+        },
+        {
+          "id": "SHIZUMI_DAISY_FINN_ANGRY",
+          "targetId": "Daisy",
+          "title": "Shizumi Kushinada on Daisy Finn",
+          "text": "I tried talking to Daisy once. She wasn't very receptive, but I don't think it's out of malice."
+        },
+        {
+          "id": "SHIZUMI_DAISY_FINN_ANIMAL_SIDE",
+          "targetId": "Daisy",
+          "title": "Shizumi Kushinada on Daisy Finn",
+          "text": "Daisy always seems like she's ready to bolt. I don't think she's trying to seem rude, but looks really antsy around other people."
+        },
+        {
+          "id": "SHIZUMI_DAISY_FINN_NEEDS_MONEY",
+          "targetId": "Daisy",
+          "title": "Shizumi Kushinada on Daisy Finn",
+          "text": "I always see Daisy trying to sneak off with something, like she needs the money pretty bad."
+        },
+        {
+          "id": "SHIZUMI_DAISY_FINN_WANTS_TO_LEAVE",
+          "targetId": "Daisy",
+          "title": "Shizumi Kushinada on Daisy Finn",
+          "text": "Daisy's always looking out the window. It's like she feels trapped, like a bird in a cage."
+        },
+        {
+          "id": "SHIZUMI_MARCO_ALBIZU_OLD",
+          "targetId": "Marco",
+          "title": "Shizumi Kushinada on Marco Albizu",
+          "text": "Oh Marco! He reminds me of my grandfather. He's the first person I met in this town, and he's really nice to me!"
+        },
+        {
+          "id": "SHIZUMI_MARCO_ALBIZU_ANGRY",
+          "targetId": "Marco",
+          "title": "Shizumi Kushinada on Marco Albizu",
+          "text": "When I was helping out at the farm, Marco warned me that he's not himself when he's worrying about his animals. He said he tends to be super snappy, but I couldn't see him being anything less than the kind old man that I know."
+        },
+        {
+          "id": "SHIZUMI_MARCO_ALBIZU_HUMAN_SIDE",
+          "targetId": "Marco",
+          "title": "Shizumi Kushinada on Marco Albizu",
+          "text": "Oh Marco? He's really nice. I think all of the townspeople love him; he has such a presence with the community."
+        },
+        {
+          "id": "SHIZUMI_MARCO_ALBIZU_CARRYING_TOO_MUCH",
+          "targetId": "Marco",
+          "title": "Shizumi Kushinada on Marco Albizu",
+          "text": "I don't know how Marco does all of the farmwork by himself. I tried helping pick carrots with him a few days ago... he ended up doing most of the work."
+        },
+        {
+          "id": "SHIZUMI_MARCO_ALBIZU_HAS_TO_STAY",
+          "targetId": "Marco",
+          "title": "Shizumi Kushinada on Marco Albizu",
+          "text": "I know Marco must be worried about his livestock. I feel like he needs to stay here, but I know he must be worrying about his animals back home. I hope they're doing okay."
+        }
+      ],
+      "day2": [],
       "accusation": [
-        "Are you actually this stupid?",
-        "Look at my belt!",
-        "I make swords and armor, not fragile little watches and clocks.",
-        "What would I even do with some clockmaker’s tweezers?",
-        "Pull the trigger if you want, I hope you’re happy when all of our blood is on your hands."
-      ]
-    },
-    {
-      "id": "Elara",
-      "displayName": "Elara Venn",
-      "identity": "Head of housekeeping for the estate.",
-      "day1": [
-        "Welcome to the mansion.",
-        "I am Elara, the head of housekeeping for the estate.",
-        "I guide the staff that prepare the rooms and maintain the house.",
-        "I’d prefer to stay out of the guests’ conflicts, but I do know these halls better than anyone else.",
-        "Let me know if your room needs cleaning, and I’ll get on it right away."
+        "Wait, based on what?",
+        "I've been taking pictures because photographs don't change their story when they get scared.",
+        "I may keep things to myself, but that doesn't make me a killer.",
+        "Check the evidence again before the last picture in my camera becomes proof that you chose wrong."
       ],
-      "day2": [
-        "Mr. Palmer was nothing but kind to me and the staff.",
-        "To see a guest’s life taken so violently in these halls is deeply unsettling.",
-        "Please, hunter, find the person responsible for this."
-      ],
-      "accusation": [
-        "Hunter, please be reasonable… I have dedicated my life to maintaining this estate and caring for its guests.",
-        "I have no need for any more money, nor any reason to have taken the life of an innocent guest.",
-        "You are making a grave mistake."
+      "werewolfAccusation": [
+        "I kept wondering why the creature never appeared clearly in my photographs.",
+        "Then I realized I had been standing behind the camera every time.",
+        "Smile, hunter. I want one last picture before the flash goes dark."
       ]
     },
     {
       "id": "Harold",
       "displayName": "Harold Palmer",
-      "identity": "Clock repairer called to the mansion.",
-      "day1": [
-        "Hello there!",
-        "This weather is quite dreary, isn’t it?",
-        "Excuse my rudeness, my name is Harold, I was called here to repair the clocks around the mansion, but it looks like we’re all trapped in here for the time being.",
-        "I don’t know if my ears are playing tricks on me, but I heard there might be a werewolf of some sorts, but I’m trying to make the best of it.",
-        "Would you care for a peppermint?"
+      "identity": "Clocksmith",
+      "traits": [
+        "Old",
+        "Withholding",
+        "HumanSide",
+        "CarryingTooMuch",
+        "HasToStay"
+      ],
+      "introduction": [
+        "Hello there! This weather is quite dreary, isn’t it? Excuse my rudeness, my name is Harold. I was called here to repair the clocks around the mansion, but it looks like we’re all trapped here for the time being. I don’t know if my ears are playing tricks on me, but I heard there might be a werewolf of some sorts. I’m trying to make the best of it. Would you care for a peppermint?"
+      ],
+      "dailyGreetings": [
+        "I hope the storm passes before my vacation does.",
+        "The grandfather clock is keeping rather odd time today.",
+        "I thought I heard it strike an extra hour last night.",
+        "I should finish the repair before anything else goes wrong.",
+        "Perhaps I should stop pretending that howl was only the wind."
+      ],
+      "clueDialogue": {
+        "saw": "I saw [evidence] while I was looking for my tools. At first, I thought it was part of the repair.",
+        "heard": "I heard [sound] during the night. I blamed the old clock, but perhaps I was mistaken.",
+        "found": "I found [evidence] near [place]. It’s a curious thing to turn up in a house like this.",
+        "inferred": "I may be wrong, but [evidence] seems to fit with what I heard earlier."
+      },
+      "facts": [
+        {
+          "id": "HAROLD_SELF_WITHHOLDING",
+          "targetId": "",
+          "title": "About Harold Palmer",
+          "text": "More about me? Oh, I wouldn't want to worry you with all that. How is your family keeping, hunter?"
+        },
+        {
+          "id": "HAROLD_SELF_HUMAN_SIDE",
+          "targetId": "",
+          "title": "About Harold Palmer",
+          "text": "Clocks do more than tell the time; they can tell you how people choose to spend their days. That matters to me just as much as the gears."
+        },
+        {
+          "id": "HAROLD_SELF_OVERBURDENED",
+          "targetId": "",
+          "title": "About Harold Palmer",
+          "text": "I never travel without all of my tools. You'd be surprised at how often one little screw saves the day."
+        },
+        {
+          "id": "HAROLD_SELF_HAS_TO_STAY",
+          "targetId": "",
+          "title": "About Harold Palmer",
+          "text": "I can't leave until the clock is fixed. Even then, it's not like the entrances work right now."
+        },
+        {
+          "id": "HAROLD_MARCO_ALBIZU_OLD",
+          "targetId": "Marco",
+          "title": "Harold Palmer on Marco Albizu",
+          "text": "Oh Marco? We've been friends for almost 50 years. I remember when he was smaller than the animals he cared for."
+        },
+        {
+          "id": "HAROLD_MARCO_ALBIZU_ANGRY",
+          "targetId": "Marco",
+          "title": "Harold Palmer on Marco Albizu",
+          "text": "Marco? He's usually pretty nice, unless you joke about his animals."
+        },
+        {
+          "id": "HAROLD_MARCO_ALBIZU_HUMAN_SIDE",
+          "targetId": "Marco",
+          "title": "Harold Palmer on Marco Albizu",
+          "text": "Marco? He's pretty trusting of other people, but I wouldn't want to get on his bad side."
+        },
+        {
+          "id": "HAROLD_MARCO_ALBIZU_CARRYING_TOO_MUCH",
+          "targetId": "Marco",
+          "title": "Harold Palmer on Marco Albizu",
+          "text": "I always see Marco carrying stacks and stacks of animal products. I wonder how he does it at his age."
+        },
+        {
+          "id": "HAROLD_MARCO_ALBIZU_HAS_TO_STAY",
+          "targetId": "Marco",
+          "title": "Harold Palmer on Marco Albizu",
+          "text": "I know Marco well. I know he wouldn't leave this mansion knowing that his animals could be in danger."
+        },
+        {
+          "id": "HAROLD_PERCY_NORN_YOUNG",
+          "targetId": "Percy",
+          "title": "Harold Palmer on Percy Norn",
+          "text": "I remember when Percy was a young little lad. I'm friends with his master, and he's proud of how well he's growing."
+        },
+        {
+          "id": "HAROLD_PERCY_NORN_WITHHOLDING",
+          "targetId": "Percy",
+          "title": "Harold Palmer on Percy Norn",
+          "text": "What I know of Percy? He might not seem like a very friendly young man, but he's kind at heart once he gets to know you."
+        },
+        {
+          "id": "HAROLD_PERCY_NORN_HUMAN_SIDE",
+          "targetId": "Percy",
+          "title": "Harold Palmer on Percy Norn",
+          "text": "Percy? He cares a lot for the people of the village. He has a good heart."
+        },
+        {
+          "id": "HAROLD_PERCY_NORN_CARRYING_TOO_MUCH",
+          "targetId": "Percy",
+          "title": "Harold Palmer on Percy Norn",
+          "text": "Percy's tools are much heavier than mine. I don't know how he can carry all of that."
+        },
+        {
+          "id": "HAROLD_PERCY_NORN_WANTS_TO_LEAVE",
+          "targetId": "Percy",
+          "title": "Harold Palmer on Percy Norn",
+          "text": "I talked to Percy this morning. He seemed really eager to get back to work."
+        },
+        {
+          "id": "HAROLD_MATABA_EIJI_OLD",
+          "targetId": "Mataba",
+          "title": "Harold Palmer on Mataba Eiji",
+          "text": "Mataba? I think he's older than he looks. It's something about the way he holds himself."
+        },
+        {
+          "id": "HAROLD_MATABA_EIJI_ANGRY",
+          "targetId": "Mataba",
+          "title": "Harold Palmer on Mataba Eiji",
+          "text": "I haven't talked to Mataba that much, but he always seems like he has something on his mind, and always looks frustrated."
+        },
+        {
+          "id": "HAROLD_MATABA_EIJI_ANIMAL_SIDE",
+          "targetId": "Mataba",
+          "title": "Harold Palmer on Mataba Eiji",
+          "text": "Mataba? He seems like the type of man to do whatever it takes to get what he wants."
+        },
+        {
+          "id": "HAROLD_MATABA_EIJI_NEEDS_MONEY",
+          "targetId": "Mataba",
+          "title": "Harold Palmer on Mataba Eiji",
+          "text": "Oh Mataba? I overheard him talking about some sort of inheritance... I wonder what he means."
+        },
+        {
+          "id": "HAROLD_MATABA_EIJI_WANTS_TO_LEAVE",
+          "targetId": "Mataba",
+          "title": "Harold Palmer on Mataba Eiji",
+          "text": "Mataba seems really impatient to get out of this place. I sympathize for him. When I was his age I was always traveling and never stayed in one place."
+        }
       ],
       "day2": [
         "Poor Harold… he was just trying to do his job and ended up as dinner for some beast...",
@@ -143,7 +1273,427 @@
         "The tools and parts he brought along must have been expensive, they’re all missing?",
         "The werewolf didn’t just kill him, it robbed him!"
       ],
-      "accusation": []
+      "accusation": [
+        "Oh dear.",
+        "I know I've been vague, but an old clockmaker has plenty of private memories and very few monstrous secrets.",
+        "These hands repair what time wears down; they do not tear people apart.",
+        "Please don't let haste make this decision for you."
+      ],
+      "werewolfAccusation": [
+        "Every clock in this mansion told me how long I had until the next change.",
+        "I had hoped to finish my work before you understood.",
+        "It seems your time has run out first."
+      ]
+    },
+    {
+      "id": "Marco",
+      "displayName": "Marco Albizu",
+      "identity": "Farmer",
+      "traits": [
+        "Old",
+        "Angry",
+        "HumanSide",
+        "CarryingTooMuch",
+        "HasToStay"
+      ],
+      "introduction": [
+        "Are you the hunter they sent? Marco Albizu. I brought vegetables for the kitchen when the storm hit. My sheep were restless before I left. I need to get back to them as soon as I can."
+      ],
+      "dailyGreetings": [
+        "I need to get back to the farm as soon as the weather allows.",
+        "This storm’s keeping me from checking on the animals.",
+        "I heard something near the grounds last night.",
+        "I don’t like how quiet it’s gotten.",
+        "We’ll keep this house secure until we can get everyone out safely."
+      ],
+      "clueDialogue": {
+        "saw": "I saw [evidence] near [place]. It reminded me of the tracks I’ve seen around the farm.",
+        "heard": "I heard [sound] outside. Sheep make a different noise when they’re frightened.",
+        "found": "I found [evidence] while checking the grounds. It was fresh.",
+        "inferred": "That didn’t happen on its own. Something was disturbed, and I’d like to know why."
+      },
+      "facts": [
+        {
+          "id": "MARCO_SELF_ANGRY",
+          "targetId": "",
+          "title": "About Marco Albizu",
+          "text": "Call me stubborn if you want, but I won't let anybody disrespect my sheep."
+        },
+        {
+          "id": "MARCO_SELF_HUMAN_SIDE",
+          "targetId": "",
+          "title": "About Marco Albizu",
+          "text": "One's word is like a fence. If it breaks, everybody's livestock gets out."
+        },
+        {
+          "id": "MARCO_SELF_OVERBURDENED",
+          "targetId": "",
+          "title": "About Marco Albizu",
+          "text": "I came to deliver vegetables to Elara and ended up hauling all of the worries of the farm with me."
+        },
+        {
+          "id": "MARCO_SELF_HAS_TO_STAY",
+          "targetId": "",
+          "title": "About Marco Albizu",
+          "text": "I won't leave until we figure out what's causing all of my sheep to worry."
+        },
+        {
+          "id": "MARCO_HAROLD_PALMER_OLD",
+          "targetId": "Harold",
+          "title": "Marco Albizu on Harold Palmer",
+          "text": "Oh, Harold? He's an old friend of mine. Our grandchildren play together on my farm."
+        },
+        {
+          "id": "MARCO_HAROLD_PALMER_WITHHOLDING",
+          "targetId": "Harold",
+          "title": "Marco Albizu on Harold Palmer",
+          "text": "Harold doesn't really talk about his past with people he doesn't know."
+        },
+        {
+          "id": "MARCO_HAROLD_PALMER_HUMAN_SIDE",
+          "targetId": "Harold",
+          "title": "Marco Albizu on Harold Palmer",
+          "text": "I've known Harold for a long time. He's very caring, and will often offer comfort to those in need."
+        },
+        {
+          "id": "MARCO_HAROLD_PALMER_CARRYING_TOO_MUCH",
+          "targetId": "Harold",
+          "title": "Marco Albizu on Harold Palmer",
+          "text": "I've watched Harold grow older these past few years. It always looks like it's harder and harder for him to work. I wonder when he'll retire and spend more time with his family. Me? I still have five or so more years until I plan on passing down the farm."
+        },
+        {
+          "id": "MARCO_HAROLD_PALMER_HAS_TO_STAY",
+          "targetId": "Harold",
+          "title": "Marco Albizu on Harold Palmer",
+          "text": "If there's anything I know about Harold, it's that he'll prioritize his work over his safety. It's not the best, but he's honest about it."
+        },
+        {
+          "id": "MARCO_SHIZUMI_KUSHINADA_YOUNG",
+          "targetId": "Shizumi",
+          "title": "Marco Albizu on Shizumi Kushinada",
+          "text": "Shizumi is about the same age as my granddaughter. Their smiles look alike."
+        },
+        {
+          "id": "MARCO_SHIZUMI_KUSHINADA_WITHHOLDING",
+          "targetId": "Shizumi",
+          "title": "Marco Albizu on Shizumi Kushinada",
+          "text": "Shizumi has helped out around the farm. I try to make small talk, but she doesn't seem to be the type to be very open about her past."
+        },
+        {
+          "id": "MARCO_SHIZUMI_KUSHINADA_HUMAN_SIDE",
+          "targetId": "Shizumi",
+          "title": "Marco Albizu on Shizumi Kushinada",
+          "text": "Shizumi? She's very kind. I respect how she treats my animals. I gave her some carrots to take back to her family, but now we're both trapped in this darn mansion."
+        },
+        {
+          "id": "MARCO_SHIZUMI_KUSHINADA_NEEDS_MONEY",
+          "targetId": "Shizumi",
+          "title": "Marco Albizu on Shizumi Kushinada",
+          "text": "I believe I overheard Shizumi talking about a photography competition. I wish her the best in her endeavors."
+        },
+        {
+          "id": "MARCO_SHIZUMI_KUSHINADA_WANTS_TO_LEAVE",
+          "targetId": "Shizumi",
+          "title": "Marco Albizu on Shizumi Kushinada",
+          "text": "Shizumi mentioned her photography competition's deadline is soon. I'd hate for that girl to miss something so important to her because of these circumstances."
+        },
+        {
+          "id": "MARCO_SEBES_YORKE_OLD",
+          "targetId": "Sebes",
+          "title": "Marco Albizu on Sebes Yorke",
+          "text": "Sebes? He's been a thorn in my side for quite some time now."
+        },
+        {
+          "id": "MARCO_SEBES_YORKE_ANGRY",
+          "targetId": "Sebes",
+          "title": "Marco Albizu on Sebes Yorke",
+          "text": "Every time I see Sebes he always has a nasty look about him. He always seems to be angry at something or someone."
+        },
+        {
+          "id": "MARCO_SEBES_YORKE_ANIMAL_SIDE",
+          "targetId": "Sebes",
+          "title": "Marco Albizu on Sebes Yorke",
+          "text": "That Sebes will stop at nothing to make a profit. I have no respect for people like that."
+        },
+        {
+          "id": "MARCO_SEBES_YORKE_NEEDS_MONEY",
+          "targetId": "Sebes",
+          "title": "Marco Albizu on Sebes Yorke",
+          "text": "I refuse to give any of my product to Sebes. I know it hurts his profit, and he won't be benefitting off of me any longer."
+        },
+        {
+          "id": "MARCO_SEBES_YORKE_HAS_TO_STAY",
+          "targetId": "Sebes",
+          "title": "Marco Albizu on Sebes Yorke",
+          "text": "I don't believe Sebes to be the type to leave when there's such a high bounty on that werewolf's head. From our interactions, he doesn't seem like the type."
+        }
+      ],
+      "day2": [],
+      "accusation": [
+        "I've seen frightened animals lash out with better sense than this.",
+        "I stayed because my sheep are missing and because nobody here should face that creature alone.",
+        "Being stubborn and angry doesn't make me a beast.",
+        "Use your head before you fire."
+      ],
+      "werewolfAccusation": [
+        "All this time I blamed wolves for the animals disappearing from my fields.",
+        "A farmer should know better than anyone when a predator has learned to wear a familiar face.",
+        "You found me, hunter. Now protect your flock."
+      ]
+    },
+    {
+      "id": "Percy",
+      "displayName": "Percy Norn",
+      "identity": "Blacksmith Apprentice",
+      "traits": [
+        "Young",
+        "Withholding",
+        "HumanSide",
+        "CarryingTooMuch",
+        "WantsToLeave"
+      ],
+      "introduction": [
+        "You? A hunter? I wouldn’t believe it with that gear. It looks like you haven’t had an upgrade in a decade. Who designs a gun with only one chamber? Don’t expect me to fix it for free just because we’re stuck here together. Well? What are you standing around for? My name? Percy, but it’s irrelevant to you. If your tools need fixing, come and find me. Not that I care if you get yourself killed or anything."
+      ],
+      "dailyGreetings": [
+        "Don’t touch the tools. I finally got them in order.",
+        "The cold’s making every repair take twice as long.",
+        "Something’s been moving things around the workshop.",
+        "I’m checking the doors. If one of them fails, we’ll have a problem.",
+        "Stay behind me if you hear something. That’s not up for debate."
+      ],
+      "clueDialogue": {
+        "saw": "I saw [evidence] by [place]. Didn’t touch it. Don’t want to ruin it.",
+        "heard": "I heard [sound] from [place]. If it was one of the tools, I’ll know when I check.",
+        "found": "I found [evidence] while checking the hardware. It doesn’t belong there.",
+        "inferred": "That mark didn’t happen by accident. Someone—or something—put force into it."
+      },
+      "facts": [
+        {
+          "id": "PERCY_SELF_WITHHOLDING",
+          "targetId": "",
+          "title": "About Percy Norn",
+          "text": "More about me? Do you even really care, or are you just trying to make small talk? Go away."
+        },
+        {
+          "id": "PERCY_SELF_HUMAN_SIDE",
+          "targetId": "",
+          "title": "About Percy Norn",
+          "text": "A village depends on fixing what breaks. Not everyone can just buy a new tool."
+        },
+        {
+          "id": "PERCY_SELF_CARRYING_TOO_MUCH",
+          "targetId": "",
+          "title": "About Percy Norn",
+          "text": "The tools I carry are heavy, but it saves a trip back to the forge every now and then."
+        },
+        {
+          "id": "PERCY_SELF_WANTS_TO_LEAVE",
+          "targetId": "",
+          "title": "About Percy Norn",
+          "text": "Can you hurry up and catch this werewolf? The longer I'm away from the forge, the more work piles up."
+        },
+        {
+          "id": "PERCY_HAROLD_PALMER_OLD",
+          "targetId": "Harold",
+          "title": "Percy Norn on Harold Palmer",
+          "text": "You're asking about Harold? I know him because of my master. He's been working on his craft for decades, and I respect the hell out of him for that."
+        },
+        {
+          "id": "PERCY_HAROLD_PALMER_WITHHOLDING",
+          "targetId": "Harold",
+          "title": "Percy Norn on Harold Palmer",
+          "text": "Harold? Whenever I talk with him it's only really ever about our work. Nothing much is said about his personal life."
+        },
+        {
+          "id": "PERCY_HAROLD_PALMER_HUMAN_SIDE",
+          "targetId": "Harold",
+          "title": "Percy Norn on Harold Palmer",
+          "text": "I respect Harold greatly. He's one of the kindest people I know, and I hope to take after him someday."
+        },
+        {
+          "id": "PERCY_HAROLD_PALMER_CARRYING_TOO_MUCH",
+          "targetId": "Harold",
+          "title": "Percy Norn on Harold Palmer",
+          "text": "You think I have a lot of tools? Look at Harold. For someone his age he's carrying way too much. I guess I'm the same, but it's different, okay!"
+        },
+        {
+          "id": "PERCY_HAROLD_PALMER_HAS_TO_STAY",
+          "targetId": "Harold",
+          "title": "Percy Norn on Harold Palmer",
+          "text": "Harold is here to fix the clocks. I don't think he'd be in much hurry to leave when there's work to be done."
+        },
+        {
+          "id": "PERCY_PELL_VENNE_YOUNG",
+          "targetId": "Pell",
+          "title": "Percy Norn on Pell Venne",
+          "text": "Oh Pell? He's like a younger brother to me. We're close in age, early-to-mid 20s."
+        },
+        {
+          "id": "PERCY_PELL_VENNE_WITHHOLDING",
+          "targetId": "Pell",
+          "title": "Percy Norn on Pell Venne",
+          "text": "Pell's the type of guy who tends to focus on other people more than himself. If you ask him if he's doing alright, he'll deflect it back to you."
+        },
+        {
+          "id": "PERCY_PELL_VENNE_HUMAN_SIDE",
+          "targetId": "Pell",
+          "title": "Percy Norn on Pell Venne",
+          "text": "Pell has a strong sense of justice. He's always looking to help people, even when he's in danger as well."
+        },
+        {
+          "id": "PERCY_PELL_VENNE_CARRYING_TOO_MUCH",
+          "targetId": "Pell",
+          "title": "Percy Norn on Pell Venne",
+          "text": "Pell and I are pretty similar. We always like being prepared for everything, and tend to carry more than what we need. It makes sense that we're friends."
+        },
+        {
+          "id": "PERCY_PELL_VENNE_HAS_TO_STAY",
+          "targetId": "Pell",
+          "title": "Percy Norn on Pell Venne",
+          "text": "I wouldn't take it that Pell would sit around and run when there's danger nearby. He would rather die than anyone else get hurt."
+        },
+        {
+          "id": "PERCY_ROWAN_HALE_YOUNG",
+          "targetId": "Rowan",
+          "title": "Percy Norn on Rowan Hale",
+          "text": "Rowan? He's a nice guy. I don't know him super well, but he's nice. Not the brightest, but he's nice."
+        },
+        {
+          "id": "PERCY_ROWAN_HALE_WITHHOLDING",
+          "targetId": "Rowan",
+          "title": "Percy Norn on Rowan Hale",
+          "text": "Rowan doesn't like to talk about himself a lot. Ask him about some facts on plants, though, and he'll talk your ear off."
+        },
+        {
+          "id": "PERCY_ROWAN_HALE_ANIMAL_SIDE",
+          "targetId": "Rowan",
+          "title": "Percy Norn on Rowan Hale",
+          "text": "Rowan's not the brightest when it comes to common sense, but he has a keen sense for hunting. Whenever we go fishing he always catches more than I do."
+        },
+        {
+          "id": "PERCY_ROWAN_HALE_NEEDS_MONEY",
+          "targetId": "Rowan",
+          "title": "Percy Norn on Rowan Hale",
+          "text": "I've been repairing Rowan's tools for free for the past few years. I know he doesn't make a ton of money, but he's a good guy at heart. I'll help where I can."
+        },
+        {
+          "id": "PERCY_ROWAN_HALE_WANTS_TO_LEAVE",
+          "targetId": "Rowan",
+          "title": "Percy Norn on Rowan Hale",
+          "text": "There's no way Rowan is comfortable stuck in the mansion. He's always been more of an outdoorsy person. I notice that he's usually more himself when we're out on a hike in the woods."
+        }
+      ],
+      "day2": [
+        "Damn it… that old man didn’t deserve that.",
+        "And whoever took all his tools, for what?",
+        "That beast wouldn’t even know how to hold a clockmaker’s screwdriver correctly.",
+        "Look, just figure out who did this, alright?",
+        "Don’t make me forge a silver weapon myself and do your job for you."
+      ],
+      "accusation": [
+        "You're accusing me because I keep my mouth shut and carry too many tools?",
+        "I fix broken metal for this town.",
+        "I don't turn into something that breaks people.",
+        "Check your evidence again, because if you fire now, there won't be a blacksmith left to make your next silver round."
+      ],
+      "werewolfAccusation": [
+        "I kept telling myself I could forge restraints strong enough to hold it back.",
+        "There isn't a metal in my workshop that can contain what I become.",
+        "I hope that silver round is better made than the rest of your gear."
+      ]
+    }
+  ],
+  "clues": [
+    {
+      "id": "blood",
+      "title": "Blood",
+      "trait": "Angry",
+      "evidence": "a trail of fresh blood",
+      "sound": "something dragging across the floor",
+      "place": "the west hall",
+      "description": "Fresh blood was found where no injured guest admitted being."
+    },
+    {
+      "id": "wall_scratches",
+      "title": "Wall Scratches",
+      "trait": "Withholding",
+      "evidence": "deep scratches in the wall",
+      "sound": "scraping behind the paneling",
+      "place": "the upstairs hall",
+      "description": "Deep scratches were concealed along the mansion wall."
+    },
+    {
+      "id": "tooth",
+      "title": "Broken Tooth",
+      "trait": "Young",
+      "evidence": "a sharp broken tooth",
+      "sound": "something small striking the floor",
+      "place": "the library",
+      "description": "A recently broken tooth was found inside the mansion."
+    },
+    {
+      "id": "fur",
+      "title": "Coarse Fur",
+      "trait": "Old",
+      "evidence": "a patch of coarse grey fur",
+      "sound": "bristles brushing against wood",
+      "place": "the east corridor",
+      "description": "Coarse fur was caught on the mansion woodwork."
+    },
+    {
+      "id": "pawprint",
+      "title": "Pawprint",
+      "trait": "AnimalSide",
+      "evidence": "a large muddy pawprint",
+      "sound": "claws crossing the stone floor",
+      "place": "the entry hall",
+      "description": "A large pawprint was left in mud inside the mansion."
+    },
+    {
+      "id": "footprint",
+      "title": "Footprint",
+      "trait": "HumanSide",
+      "evidence": "a deliberate bootprint",
+      "sound": "measured footsteps after midnight",
+      "place": "the dining hall",
+      "description": "A human-shaped footprint suggests deliberate movement through the mansion."
+    },
+    {
+      "id": "stolen_item",
+      "title": "Stolen Item",
+      "trait": "NeedsMoney",
+      "evidence": "a valuable item hidden away",
+      "sound": "a case being forced open",
+      "place": "the study",
+      "description": "A valuable item disappeared and was hidden elsewhere in the mansion."
+    },
+    {
+      "id": "lost_item",
+      "title": "Lost Item",
+      "trait": "CarryingTooMuch",
+      "evidence": "an item dropped in haste",
+      "sound": "something heavy hitting the floor",
+      "place": "the servants’ hall",
+      "description": "An overburdened traveler appears to have dropped something while moving quickly."
+    },
+    {
+      "id": "door_scratches",
+      "title": "Scratched Door",
+      "trait": "WantsToLeave",
+      "evidence": "claw marks around a locked door",
+      "sound": "scratching at an exterior door",
+      "place": "the rear entrance",
+      "description": "Fresh claw marks surround a door leading out of the mansion."
+    },
+    {
+      "id": "broken_window",
+      "title": "Broken Window",
+      "trait": "HasToStay",
+      "evidence": "a window broken from inside",
+      "sound": "glass shattering during the night",
+      "place": "the sitting room",
+      "description": "A window was broken from inside, though the creature apparently remained in the mansion."
     }
   ]
 }

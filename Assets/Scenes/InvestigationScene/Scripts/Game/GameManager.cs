@@ -75,13 +75,18 @@ public class GameManager : MonoBehaviour
 
     public void checkAccusation(string suspect)
     {
+        checkAccusation(suspect, "Sebes");
+    }
+
+    public void checkAccusation(string suspect, string werewolf)
+    {
         player.accusationMode = false;
         choosingSuspect = false;
 
-        if (suspect == "Sebes")
+        if (suspect == werewolf)
         {
             NPCDialog.dialog.text =
-                "You correctly identified Sebes as the werewolf!";
+                "You correctly identified " + werewolf + " as the werewolf!";
 
             Debug.Log("Player wins!");
         }

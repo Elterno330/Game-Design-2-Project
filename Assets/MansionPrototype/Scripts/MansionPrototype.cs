@@ -1,24 +1,40 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 // The existing Player, NPCDialog and GameManager remain the world-facing components.
-// This director handles the PDF's short, deliberately paced two-day prototype.
+// This director handles the five-day investigation prototype and its session state.
 public class MansionPrototype : MonoBehaviour
 {
+    [Serializable] public class CharacterFact
+    {
+        public string id, targetId, title, text;
+    }
+    [Serializable] public class ClueDialogue
+    {
+        public string saw, heard, found, inferred;
+    }
+    [Serializable] public class ClueDefinition
+    {
+        public string id, title, trait, evidence, sound, place, description;
+    }
     [Serializable] public class Character
     {
         public string id, displayName, identity;
-        public string[] day1, day2, accusation;
+        public string[] traits, introduction, dailyGreetings, day2, accusation, werewolfAccusation;
+        public ClueDialogue clueDialogue;
+        public CharacterFact[] facts;
     }
     [Serializable] public class DialogueScript
     {
         public string[] intro, question, interrogation, win, lose;
         public Character[] characters;
+        public ClueDefinition[] clues;
     }
     public TextAsset dialogueScript;
     public TMP_FontAsset dialogueFont;
@@ -27,6 +43,9 @@ public class MansionPrototype : MonoBehaviour
     public NPCDialog[] npcs;
     public Texture2D[] portraits;
     public Rect[] portraitRegions;
+    public Transform[] clueSpots;
+    public string[] clueIconIds;
+    public Sprite[] clueIcons;
     [Tooltip("Optional Journal tools-clue image. Leave empty to use the temporary tool-bag icon.")]
     public Sprite journalToolsIcon;
     public DialogueScript Script { get; private set; }
@@ -42,10 +61,16 @@ public class MansionPrototype : MonoBehaviour
     public string CurrentSentence => sentenceText ? sentenceText.text : "";
     public int SentenceIndex => sentenceIndex;
     public bool CanOpenJournal => !DialogueOpen && !InChoice && !IsTransitioning && !Finished
-        && !gameManager.gameOver && !gameManager.choosingSuspect;
+        && !gameManager.gameOver && !gameManager.choosingSuspect
+        && (!cluePopupRoot || !cluePopupRoot.activeSelf);
 
     readonly HashSet<string> introduced = new HashSet<string>();
     readonly HashSet<string> dayTwoHeard = new HashSet<string>();
+    readonly HashSet<string> learnedFactIds = new HashSet<string>();
+    readonly HashSet<string> deadIds = new HashSet<string>();
+    readonly HashSet<string> usedClueIds = new HashSet<string>();
+    readonly HashSet<string> clueKnowerIds = new HashSet<string>();
+    readonly List<ClueDefinition> runClues = new List<ClueDefinition>();
     readonly List<GameObject> choices = new List<GameObject>();
     GameObject dialogueRoot, portraitRoot;
     GameObject objectiveRoot;
@@ -61,6 +86,9 @@ public class MansionPrototype : MonoBehaviour
     float portraitRatio = 1f;
     GameObject endingRoot;
     TextMeshProUGUI endingTitle, endingDescription;
+    GameObject cluePopupRoot;
+    TextMeshProUGUI cluePopupTitle, cluePopupDescription;
+    Image cluePopupImage;
     PrototypeClockIcon clockIcon;
     Button accuseButton;
     MansionJournal journal;
@@ -77,6 +105,18 @@ public class MansionPrototype : MonoBehaviour
     CanvasGroup dayTransition;
     TextMeshProUGUI transitionTitle;
     float transitionElapsed;
+    bool transitionAdvancedDay;
+    string lastVictimId;
+    Vector3[] characterSpots;
+    ClueDefinition currentClue;
+    GameObject clueSparkle;
+    Vector3 sparkleBaseScale;
+    bool clueRevealed;
+    string werewolfId;
+    public string WerewolfId => werewolfId;
+
+    const int FinalDay = 5;
+    const int ActionsPerDay = 3;
 
     static readonly Color Ink = new Color(.11f, .10f, .14f);
     static readonly Color Cream = new Color(.96f, .92f, .83f);
@@ -87,7 +127,9 @@ public class MansionPrototype : MonoBehaviour
     {
         Script = JsonUtility.FromJson<DialogueScript>(dialogueScript.text);
         startingPosition = player.transform.position;
+        characterSpots = npcs.Select(npc => npc.transform.position).ToArray();
         BuildUI();
+        BuildClueSparkle();
         journal = gameObject.AddComponent<MansionJournal>();
         journal.Initialize(this, canvas.transform);
         foreach (var npc in npcs)
@@ -106,16 +148,24 @@ public class MansionPrototype : MonoBehaviour
     {
         IsTransitioning = false;
         endingRoot.SetActive(false);
+        cluePopupRoot.SetActive(false);
         dayTransition.gameObject.SetActive(false);
         Day = 1;
         Interrogated = EvidenceFound = Finished = false;
         interrogationCompleted = false;
-        introduced.Clear(); dayTwoHeard.Clear();
+        introduced.Clear(); dayTwoHeard.Clear(); learnedFactIds.Clear(); deadIds.Clear();
+        usedClueIds.Clear(); clueKnowerIds.Clear(); clueRevealed = false;
+        lastVictimId = null;
+        werewolfId = Script.characters[UnityEngine.Random.Range(0, Script.characters.Length)].id;
+        BuildRunClueOrder();
+        clueSparkle.SetActive(false);
         journal.ResetRun();
         player.GetComponent<Rigidbody>().position = startingPosition;
         player.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-        gameManager.numberOfActions = 1;
+        gameManager.numberOfActions = ActionsPerDay;
         gameManager.gameOver = gameManager.nightTime = gameManager.choosingSuspect = false;
+        ShuffleLivingCharacters();
+        PrepareDailyClue();
         RefreshNPCLabels();
         RefreshHUD();
         ShowSequence("Inner thoughts", Script.intro, CloseDialogue);
@@ -123,7 +173,22 @@ public class MansionPrototype : MonoBehaviour
 
     void Update()
     {
+        if (clueSparkle.activeSelf)
+        {
+            clueSparkle.transform.Rotate(0f, 90f * Time.unscaledDeltaTime, 0f, Space.World);
+            clueSparkle.transform.localScale = sparkleBaseScale * (1f + .15f * Mathf.Sin(Time.unscaledTime * 4f));
+        }
         if (endingRoot.activeSelf) return;
+        if (cluePopupRoot.activeSelf)
+        {
+            var popupKeys = Keyboard.current;
+            bool dismissKey = popupKeys != null && (popupKeys.eKey.wasPressedThisFrame
+                || popupKeys.spaceKey.wasPressedThisFrame || popupKeys.enterKey.wasPressedThisFrame
+                || popupKeys.escapeKey.wasPressedThisFrame);
+            bool dismissClick = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+            if (dismissKey || dismissClick) CloseCluePopup();
+            return;
+        }
         if (IsTransitioning)
         {
             TickDayTransition(Time.unscaledDeltaTime);
@@ -150,91 +215,164 @@ public class MansionPrototype : MonoBehaviour
         nearest = null;
         float nearestDistance = 2.8f * 2.8f;
         Vector3 playerPosition = player.transform.position;
+        bool clueNear = clueSparkle.activeSelf && (clueSparkle.transform.position - playerPosition).sqrMagnitude <= nearestDistance;
+        if (clueNear) nearestDistance = (clueSparkle.transform.position - playerPosition).sqrMagnitude;
         foreach (var npc in npcs)
         {
-            if (!npc) continue;
+            if (!npc || !IsAlive(npc.prototypeCharacterId)) continue;
             float distance = (npc.transform.position - playerPosition).sqrMagnitude;
             if (distance <= nearestDistance) { nearest = npc; nearestDistance = distance; }
         }
-        if (nearest != promptedNPC || Day != promptDay)
+        if (nearest != promptedNPC || Day != promptDay || clueNear)
         {
-            promptText.text = nearest ? "E  " + (Day == 2 && nearest.prototypeCharacterId == "Harold" ? "Inspect Harold's bag" : "Talk to " + nearest.prototypeCharacterId)
-                : "WASD / ARROWS  Walk       E  Talk nearby       F  Accuse on day 2";
+            promptText.text = clueNear && !nearest ? "E  Investigate the sparkling clue"
+                : nearest ? "E  Talk to " + nearest.prototypeCharacterId
+                : "WASD / ARROWS  Walk       E  Talk nearby       F  Accuse from day 2";
             promptedNPC = nearest; promptDay = Day;
         }
-        if (keys != null && keys.eKey.wasPressedThisFrame && nearest) Interact(nearest.prototypeCharacterId);
-        else if (keys != null && keys.fKey.wasPressedThisFrame && Day == 2) OpenAccusation();
+        if (keys != null && keys.eKey.wasPressedThisFrame && clueNear && !nearest) CollectClue();
+        else if (keys != null && keys.eKey.wasPressedThisFrame && nearest) Interact(nearest.prototypeCharacterId);
+        else if (keys != null && keys.fKey.wasPressedThisFrame && Day > 1) OpenAccusation();
     }
 
     public void Interact(string id)
     {
-        if (journal.BlocksWorldInput || DialogueOpen || Finished || IsTransitioning) return;
+        if (journal.BlocksWorldInput || DialogueOpen || Finished || IsTransitioning || !IsAlive(id)) return;
         var character = Script.characters.First(c => c.id == id);
-        if (Day == 1)
+        bool firstMeeting = introduced.Add(id);
+        string[] opening = firstMeeting ? character.introduction : DailyGreeting(character);
+        ShowSequence(id, opening, () =>
         {
-            ShowSequence(id, character.day1, () =>
-            {
-                introduced.Add(id);
-                journal.RecordIntroduction(id);
-                RefreshHUD();
-                ShowConversationMenu(id);
-            });
-        }
-        else
-        {
-            ShowSequence(id == "Harold" ? "Inner thoughts" : id, character.day2, () =>
-            {
-                if (id == "Harold")
-                {
-                    EvidenceFound = true;
-                    journal.RecordBagInspection();
-                }
-                else dayTwoHeard.Add(id);
-                RefreshHUD();
-                CloseDialogue();
-            });
-        }
+            journal.RecordIntroduction(id);
+            RefreshHUD();
+            ShowConversationMenu(id);
+        });
     }
 
     void ShowConversationMenu(string id)
     {
-        if (id == "Elara")
+        bool canSpend = gameManager.numberOfActions > 0;
+        if (canSpend)
         {
-            bool canSpend = !Interrogated && gameManager.numberOfActions >= 1;
-            string reason = Interrogated ? "Interrogation complete" : "No time points remaining";
-            ShowChoices(id, "Do you want to question Elara about the guests?",
-                (canSpend ? "Interrogate Elara  -  1 time point" : "Interrogate Elara  -  1 point  |  " + reason, (Action)BeginInterrogation, canSpend),
+            ShowChoices(id, "Ask for more information, or leave the conversation.",
+                ("Ask more  -  1 time point", () => BeginAskMore(id), true),
                 ("Leave", CloseDialogue, true));
         }
         else
         {
-            ShowChoices(id, "Conversation complete. Introductions cost no time points.",
-                ("Interrogate  -  not included in this prototype", (Action)null, false),
+            string nextAction = Day < FinalDay ? "End day and continue" : "Make your final accusation [F]";
+            ShowChoices(id, Day < FinalDay ? "No time points remain. End the day when you are ready."
+                    : "This is the final day. Review your journal and accuse a suspect.",
+                ("Ask more  -  no time points remaining", (Action)null, false),
+                (nextAction, Day < FinalDay ? (Action)EndDay : OpenAccusation, interrogationCompleted),
                 ("Leave", CloseDialogue, true));
         }
     }
 
-    public void BeginInterrogation()
+    public void BeginAskMore(string id)
     {
-        if (journal.BlocksWorldInput || Day != 1 || Interrogated || gameManager.numberOfActions < 1) return;
+        if (journal.BlocksWorldInput || Day < 1 || Day > FinalDay || !IsAlive(id) || gameManager.numberOfActions < 1) return;
         Interrogated = true;
         gameManager.actionUsed();
         RefreshHUD();
-        ShowSequence("Hunter", Script.question, () => ShowSequence("Elara", Script.interrogation, () =>
+        ShowSequence("Hunter", Script.question, () =>
         {
-            interrogationCompleted = true;
-            journal.RecordInterrogation();
-            RefreshObjective();
-            ShowChoices("Hunter", "Continue to the next morning when you are ready.",
-                ("Continue to day 2", (Action)BeginDayTwo, true));
-        }));
+            if (currentClue != null && !clueRevealed && clueKnowerIds.Contains(id))
+            {
+                var character = Script.characters.First(c => c.id == id);
+                ShowSequence(id, new[] { FormatClueLine(character, currentClue) }, () =>
+                {
+                    RevealClueSparkle();
+                    FinishAskMore(id);
+                });
+                return;
+            }
+
+            CharacterFact fact = SelectFact(id);
+            string[] response = fact == null
+                ? new[] { "I don't have anything else useful to add right now." }
+                : new[] { fact.text };
+            ShowSequence(id, response, () =>
+            {
+                if (fact != null)
+                {
+                    learnedFactIds.Add(fact.id);
+                    var speaker = Script.characters.First(c => c.id == id);
+                    var target = TargetForFact(fact, speaker);
+                    journal.RecordFact(fact, target, TraitFromFact(fact, target), speaker.displayName, Day);
+                }
+                FinishAskMore(id);
+            });
+        });
     }
 
-    public void BeginDayTwo()
+    // Kept for scene events and older tests that invoked the original method.
+    public void BeginInterrogation() => BeginAskMore("Elara");
+
+    void FinishAskMore(string id)
     {
-        if (journal.BlocksWorldInput || IsTransitioning || Day != 1 || !Interrogated) return;
+        interrogationCompleted = true;
+        RefreshHUD();
+        ShowConversationMenu(id);
+    }
+
+    CharacterFact SelectFact(string speakerId)
+    {
+        var character = Script.characters.First(c => c.id == speakerId);
+        var eligible = (character.facts ?? Array.Empty<CharacterFact>())
+            .Where(fact => !learnedFactIds.Contains(fact.id)
+                && (string.IsNullOrEmpty(fact.targetId) || IsAlive(fact.targetId))
+                && !journal.KnowsTrait(TargetForFact(fact, character).id,
+                    TraitFromFact(fact, TargetForFact(fact, character))))
+            .ToArray();
+        return eligible.Length == 0 ? null : eligible[UnityEngine.Random.Range(0, eligible.Length)];
+    }
+
+    Character TargetForFact(CharacterFact fact, Character speaker)
+        => string.IsNullOrEmpty(fact.targetId)
+            ? speaker : Script.characters.First(character => character.id == fact.targetId);
+
+    static string TraitFromFact(CharacterFact fact, Character target)
+    {
+        string id = (fact.id ?? "").ToUpperInvariant();
+        foreach (string trait in target.traits ?? Array.Empty<string>())
+        {
+            string token = trait switch
+            {
+                "AnimalSide" => "ANIMAL_SIDE",
+                "HumanSide" => "HUMAN_SIDE",
+                "NeedsMoney" => "NEEDS_MONEY",
+                "CarryingTooMuch" => "CARRYING_TOO_MUCH",
+                "WantsToLeave" => "WANTS_TO_LEAVE",
+                "HasToStay" => "HAS_TO_STAY",
+                _ => trait.ToUpperInvariant()
+            };
+            if (id.EndsWith("_" + token) || id.Contains("_" + token + "_")) return trait;
+        }
+        if (id.Contains("OVERBURDENED") && target.traits.Contains("CarryingTooMuch"))
+            return "CarryingTooMuch";
+        if (id.Contains("HAS_WANTS_TO_STAY") && target.traits.Contains("HasToStay"))
+            return "HasToStay";
+        if (id.Contains("CALM_WITHHOLDING") && target.traits.Contains("Withholding"))
+            return "Withholding";
+        return "Unknown";
+    }
+
+    bool IsAlive(string id) => npcs.Any(npc => npc && npc.prototypeCharacterId == id) && !deadIds.Contains(id);
+
+    string[] DailyGreeting(Character character)
+    {
+        if (character.dailyGreetings != null && character.dailyGreetings.Length > 0)
+            return new[] { character.dailyGreetings[Mathf.Clamp(Day - 1, 0, character.dailyGreetings.Length - 1)] };
+        return character.introduction ?? Array.Empty<string>();
+    }
+
+    public void EndDay()
+    {
+        if (journal.BlocksWorldInput || IsTransitioning || Day >= FinalDay || !interrogationCompleted || gameManager.numberOfActions > 0) return;
         CloseDialogue();
         IsTransitioning = true;
+        transitionAdvancedDay = false;
         player.inputLocked = true;
         gameManager.nightTime = true;
         transitionElapsed = 0f;
@@ -243,6 +381,8 @@ public class MansionPrototype : MonoBehaviour
         dayTransition.gameObject.SetActive(true);
         RefreshHUD();
     }
+
+    public void BeginDayTwo() => EndDay();
 
     void TickDayTransition(float seconds)
     {
@@ -254,11 +394,17 @@ public class MansionPrototype : MonoBehaviour
             return;
         }
         // Change the scene's story state only once it is completely hidden.
-        if (Day == 1)
+        if (!transitionAdvancedDay)
         {
-            Day = 2;
+            transitionAdvancedDay = true;
+            Day++;
+            lastVictimId = SelectNightVictim();
+            if (!string.IsNullOrEmpty(lastVictimId)) deadIds.Add(lastVictimId);
             gameManager.nightTime = false;
-            gameManager.numberOfActions = 0;
+            gameManager.numberOfActions = ActionsPerDay;
+            transitionTitle.text = "Day " + RomanDay(Day);
+            ShuffleLivingCharacters();
+            PrepareDailyClue();
             RefreshNPCLabels(); RefreshHUD();
             transitionTitle.alpha = 1f;
         }
@@ -268,47 +414,218 @@ public class MansionPrototype : MonoBehaviour
         dayTransition.gameObject.SetActive(false);
         IsTransitioning = false;
         RefreshObjective();
-        ShowSequence("Inner thoughts", new[] { "The next morning, Harold Palmer is found dead.", "Inspect his bag for evidence, and speak to any guests you want to question before making an accusation." }, () =>
+        string victimName = Script.characters.First(c => c.id == lastVictimId).displayName;
+        var morning = new List<string> { "The next morning, " + victimName + " is missing." };
+        morning.Add(Day < FinalDay
+            ? "You have " + ActionsPerDay + " actions today. Speak to the survivors and decide what information matters."
+            : "This is the fifth and final day. Gather what you can, then make your accusation.");
+        ShowSequence("Inner thoughts", morning.ToArray(), () =>
         {
-            journal.RecordHaroldDeath();
+            journal.RecordDeath(lastVictimId);
             CloseDialogue();
         });
     }
 
-    public void OpenAccusation()
+    string SelectNightVictim()
     {
-        if (journal.BlocksWorldInput || Day != 2 || Finished || IsTransitioning) return;
-        if (!EvidenceFound)
+        var candidates = npcs.Where(npc => npc && IsAlive(npc.prototypeCharacterId)
+                && npc.prototypeCharacterId != werewolfId)
+            .Select(npc => npc.prototypeCharacterId).ToArray();
+        return candidates.Length == 0 ? null : candidates[UnityEngine.Random.Range(0, candidates.Length)];
+    }
+
+    void ShuffleLivingCharacters()
+    {
+        if (characterSpots == null || characterSpots.Length == 0) return;
+        var available = characterSpots.ToList();
+        for (int i = available.Count - 1; i > 0; i--)
         {
-            ShowSequence("Hunter", new[] { "I should inspect Harold's bag before I accuse anyone." }, CloseDialogue);
+            int swap = UnityEngine.Random.Range(0, i + 1);
+            Vector3 temporary = available[i];
+            available[i] = available[swap];
+            available[swap] = temporary;
+        }
+        int spotIndex = 0;
+        foreach (var npc in npcs.Where(npc => npc && IsAlive(npc.prototypeCharacterId)))
+        {
+            if (spotIndex >= available.Count) break;
+            npc.transform.position = available[spotIndex++];
+        }
+        Physics.SyncTransforms();
+        promptedNPC = nearest = null;
+        promptDay = -1;
+    }
+
+    void PrepareDailyClue()
+    {
+        clueRevealed = false;
+        clueSparkle.SetActive(false);
+        clueKnowerIds.Clear();
+        if (Day == 1)
+        {
+            currentClue = null;
             return;
         }
-        ShowChoices("Hunter", "Who do you accuse? Choose a suspect to review, then confirm your accusation.",
-            ("Daisy Finn", () => ConfirmAccusation("Daisy"), true),
-            ("Sebes Yorke", () => ConfirmAccusation("Sebes"), true),
-            ("Percy Norn", () => ConfirmAccusation("Percy"), true),
-            ("Elara Venn", () => ConfirmAccusation("Elara"), true),
-            ("Keep investigating", CloseDialogue, true));
+        int clueIndex = Day - 2;
+        currentClue = clueIndex >= 0 && clueIndex < runClues.Count ? runClues[clueIndex] : null;
+        if (currentClue == null) return;
+        usedClueIds.Add(currentClue.id);
+        foreach (string id in npcs.Where(npc => npc && IsAlive(npc.prototypeCharacterId) && npc.prototypeCharacterId != werewolfId)
+                     .OrderBy(_ => UnityEngine.Random.value).Take(3).Select(npc => npc.prototypeCharacterId))
+            clueKnowerIds.Add(id);
+    }
+
+    void BuildRunClueOrder()
+    {
+        runClues.Clear();
+        var werewolf = Script.characters.First(character => character.id == werewolfId);
+        foreach (string trait in werewolf.traits.Distinct())
+        {
+            var matches = (Script.clues ?? Array.Empty<ClueDefinition>())
+                .Where(clue => clue.trait == trait).ToArray();
+            if (matches.Length > 0)
+                runClues.Add(matches[UnityEngine.Random.Range(0, matches.Length)]);
+            else
+                Debug.LogWarning("No clue is authored for werewolf trait: " + trait);
+        }
+        for (int i = runClues.Count - 1; i > 0; i--)
+        {
+            int swap = UnityEngine.Random.Range(0, i + 1);
+            (runClues[i], runClues[swap]) = (runClues[swap], runClues[i]);
+        }
+    }
+
+    string FormatClueLine(Character character, ClueDefinition clue)
+    {
+        string[] templates = { character.clueDialogue?.saw, character.clueDialogue?.heard,
+            character.clueDialogue?.found, character.clueDialogue?.inferred };
+        var usable = templates.Where(value => !string.IsNullOrWhiteSpace(value)).ToArray();
+        string line = usable.Length == 0 ? "I noticed something unusual near " + clue.place + "." : usable[UnityEngine.Random.Range(0, usable.Length)];
+        return line.Replace("[evidence]", clue.evidence).Replace("[sound]", clue.sound)
+            .Replace("[sound or detail]", clue.sound).Replace("[detail]", clue.evidence)
+            .Replace("[place]", clue.place).Replace("[other detail]", clue.evidence);
+    }
+
+    void RevealClueSparkle()
+    {
+        clueRevealed = true;
+        // Only the first successful clue testimony is delivered. Everyone else
+        // who was selected as a knower now falls back to character information.
+        clueKnowerIds.Clear();
+        Transform spot = clueSpots != null && clueSpots.Length > 0
+            ? clueSpots[UnityEngine.Random.Range(0, clueSpots.Length)] : null;
+        clueSparkle.transform.position = spot ? spot.position : player.transform.position + Vector3.forward * 2f;
+        clueSparkle.SetActive(true);
+        RefreshObjective();
+    }
+
+    void CollectClue()
+    {
+        if (!clueSparkle.activeSelf || currentClue == null) return;
+        clueSparkle.SetActive(false);
+        EvidenceFound = true;
+        journal.RecordGeneratedClue(currentClue, Day);
+        ShowCluePopup(currentClue);
+        RefreshHUD();
+    }
+
+    void ShowCluePopup(ClueDefinition clue)
+    {
+        player.inputLocked = true;
+        cluePopupTitle.text = "Clue Found: " + clue.title;
+        // The discovery popup, like the Clues tab, presents only the physical
+        // evidence. Trait knowledge is reserved for character profiles.
+        cluePopupDescription.text = clue.description;
+        cluePopupImage.sprite = TryGetClueIcon("evidence:" + clue.id, out var icon) ? icon : null;
+        cluePopupImage.enabled = cluePopupImage.sprite;
+        cluePopupRoot.SetActive(true);
+        cluePopupRoot.transform.SetAsLastSibling();
+        journal.RefreshAvailability();
+    }
+
+    void CloseCluePopup()
+    {
+        cluePopupRoot.SetActive(false);
+        player.inputLocked = false;
+        RefreshHUD();
+    }
+
+    void BuildClueSparkle()
+    {
+        clueSparkle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        clueSparkle.name = "Revealed Clue Sparkle";
+        clueSparkle.transform.SetParent(transform, false);
+        clueSparkle.transform.localScale = sparkleBaseScale = Vector3.one * .38f;
+        var collider = clueSparkle.GetComponent<Collider>();
+        if (collider) collider.enabled = false;
+        var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+        material.color = new Color(1f, .82f, .18f);
+        material.EnableKeyword("_EMISSION");
+        material.SetColor("_EmissionColor", new Color(1f, .62f, .08f) * 3f);
+        clueSparkle.GetComponent<Renderer>().material = material;
+        var light = clueSparkle.AddComponent<Light>();
+        light.type = LightType.Point; light.color = new Color(1f, .7f, .15f); light.range = 3f; light.intensity = 2f;
+        clueSparkle.SetActive(false);
+    }
+
+    static string RomanDay(int day)
+    {
+        string[] values = { "", "I", "II", "III", "IV", "V" };
+        return values[Mathf.Clamp(day, 1, FinalDay)];
+    }
+
+    public void OpenAccusation()
+    {
+        if (journal.BlocksWorldInput || Day <= 1 || Finished || IsTransitioning) return;
+        if (!EvidenceFound)
+        {
+            ShowSequence("Hunter", new[] { "I need at least one solid clue before I accuse anyone." }, CloseDialogue);
+            return;
+        }
+        OpenAccusationPage(0);
+    }
+
+    void OpenAccusationPage(int page)
+    {
+        var suspects = Script.characters.Where(character => IsAlive(character.id)).ToArray();
+        const int pageSize = 3;
+        int pageCount = Mathf.Max(1, Mathf.CeilToInt(suspects.Length / (float)pageSize));
+        page = Mathf.Clamp(page, 0, pageCount - 1);
+        var options = new List<(string text, Action action, bool enabled)>();
+        foreach (var suspect in suspects.Skip(page * pageSize).Take(pageSize))
+        {
+            string id = suspect.id;
+            options.Add((suspect.displayName, () => ConfirmAccusation(id), true));
+        }
+        if (page > 0) options.Add(("Previous suspects", () => OpenAccusationPage(page - 1), true));
+        if (page + 1 < pageCount) options.Add(("More suspects", () => OpenAccusationPage(page + 1), true));
+        if (pageCount == 1 || options.Count < 5) options.Add(("Keep investigating", CloseDialogue, true));
+        ShowChoices("Hunter", "Who do you accuse? Suspects " + (page * pageSize + 1) + "-" + Mathf.Min(suspects.Length, (page + 1) * pageSize)
+            + " of " + suspects.Length + ".", options.ToArray());
     }
 
     public void ConfirmAccusation(string id)
     {
-        if (journal.BlocksWorldInput || Day != 2 || !EvidenceFound || Finished) return;
-        ShowChoices(id, "Accuse " + Script.characters.First(c => c.id == id).displayName + "? This choice ends the prototype.",
+        if (journal.BlocksWorldInput || Day <= 1 || !EvidenceFound || Finished || !IsAlive(id)) return;
+        ShowChoices(id, "Accuse " + Script.characters.First(c => c.id == id).displayName + "? This choice ends the investigation.",
             ("Confirm accusation", () => Accuse(id), true), ("Go back", OpenAccusation, true));
     }
 
     public void Accuse(string id)
     {
-        if (journal.BlocksWorldInput || Day != 2 || !EvidenceFound || Finished) return;
+        if (journal.BlocksWorldInput || Day <= 1 || !EvidenceFound || Finished || !IsAlive(id)) return;
         var character = Script.characters.First(c => c.id == id);
-        if (character.accusation.Length == 0) return;
-        ShowSequence(id, character.accusation, () =>
+        bool won = id == werewolfId;
+        string[] authoredResponse = won ? character.werewolfAccusation : character.accusation;
+        string[] response = authoredResponse != null && authoredResponse.Length > 0
+            ? authoredResponse
+            : new[] { "You're making a terrible mistake. I'm not the creature you're hunting." };
+        ShowSequence(id, response, () =>
         {
-            gameManager.checkAccusation(id);
+            gameManager.checkAccusation(id, werewolfId);
             Finished = true;
-            bool won = id == "Sebes";
-            string[] ending = (won ? Script.win : Script.lose).Select(s => s.Replace("[Sebes]", "Sebes").Replace("[NAME]", character.displayName)).ToArray();
+            string[] ending = (won ? Script.win : Script.lose).Select(s => s
+                .Replace("[Sebes]", character.displayName).Replace("[NAME]", character.displayName)).ToArray();
             ShowSequence("Hunter", ending, () => ShowEnding(won));
             RefreshHUD();
         });
@@ -363,9 +680,24 @@ public class MansionPrototype : MonoBehaviour
         dialogueFrame.anchorMax = new Vector2(.965f, .32f);
         dialogueRoot.SetActive(true); player.inputLocked = true;
         journal.RefreshAvailability();
-        speaker = who; sentences = text; sentenceIndex = 0; onComplete = complete;
+        speaker = who; sentences = DialogueBeats(text); sentenceIndex = 0; onComplete = complete;
         canAdvanceAt = Time.unscaledTime + .12f;
         DisplaySentence();
+    }
+
+    static string[] DialogueBeats(IEnumerable<string> blocks)
+    {
+        var beats = new List<string>();
+        foreach (string block in blocks ?? Array.Empty<string>())
+        {
+            if (string.IsNullOrWhiteSpace(block)) continue;
+            foreach (Match match in Regex.Matches(block.Trim(), @".+?(?:[.!?…]+(?=\s|$)|$)"))
+            {
+                string beat = match.Value.Trim();
+                if (!string.IsNullOrEmpty(beat)) beats.Add(beat);
+            }
+        }
+        return beats.Count > 0 ? beats.ToArray() : new[] { "..." };
     }
 
     void DisplaySentence()
@@ -414,27 +746,51 @@ public class MansionPrototype : MonoBehaviour
 
     void SetSpeaker(string id)
     {
-        int index = Array.FindIndex(Script.characters, c => c.id == id);
-        nameText.text = index < 0 ? (id == "Hunter" ? "HUNTER" : "HUNTER  /  INNER THOUGHTS") : Script.characters[index].displayName.ToUpperInvariant();
+        int characterIndex = Array.FindIndex(Script.characters, c => c.id == id);
+        int portraitIndex = Array.FindIndex(npcs, npc => npc && npc.prototypeCharacterId == id);
+        nameText.text = characterIndex < 0 ? (id == "Hunter" ? "HUNTER" : "HUNTER  /  INNER THOUGHTS") : Script.characters[characterIndex].displayName.ToUpperInvariant();
         sentenceText.fontStyle = id == "Inner thoughts" ? FontStyles.Italic : FontStyles.Normal;
-        portraitRoot.SetActive(index >= 0);
-        if (index >= 0)
+        portraitRoot.SetActive(portraitIndex >= 0);
+        if (portraitIndex >= 0)
         {
-            portraitImage.texture = portraits[index];
+            portraitImage.texture = portraits[portraitIndex];
             // Restore the original upper-body framing, without stretching it.
-            Rect region = portraitRegions[index];
+            Rect region = portraitRegions[portraitIndex];
             portraitImage.uvRect = region;
-            portraitRatio = portraits[index].width * region.width / (portraits[index].height * region.height);
-            portraitBackground.color = portraits[index].isReadable ? portraits[index].GetPixel(0, 0) : Plum;
+            portraitRatio = portraits[portraitIndex].width * region.width / (portraits[portraitIndex].height * region.height);
+            portraitBackground.color = portraits[portraitIndex].isReadable ? portraits[portraitIndex].GetPixel(0, 0) : Plum;
         }
+    }
+
+    public bool TryGetPortrait(string id, out Texture2D texture, out Rect region)
+    {
+        texture = null;
+        region = new Rect(0, 0, 1, 1);
+        int index = Array.FindIndex(npcs, npc => npc && npc.prototypeCharacterId == id);
+        if (index < 0 || portraits == null || index >= portraits.Length || !portraits[index]) return false;
+        texture = portraits[index];
+        if (portraitRegions != null && index < portraitRegions.Length && portraitRegions[index].width > 0 && portraitRegions[index].height > 0)
+            region = portraitRegions[index];
+        return true;
+    }
+
+    public bool TryGetClueIcon(string journalId, out Sprite sprite)
+    {
+        sprite = null;
+        string id = journalId != null && journalId.StartsWith("evidence:")
+            ? journalId.Substring("evidence:".Length) : journalId;
+        int index = clueIconIds == null ? -1 : Array.IndexOf(clueIconIds, id);
+        if (index < 0 || clueIcons == null || index >= clueIcons.Length || !clueIcons[index]) return false;
+        sprite = clueIcons[index];
+        return true;
     }
 
     void RefreshHUD()
     {
-        dayText.text = Day == 1 ? "Day I" : "Day II";
+        dayText.text = "Day " + RomanDay(Day);
         pointsText.text = gameManager.numberOfActions.ToString();
         clockIcon.color = gameManager.numberOfActions > 0 ? Gold : new Color(.45f, .43f, .42f);
-        accuseButton.interactable = Day == 2 && !Finished && !DialogueOpen && !IsTransitioning;
+        accuseButton.interactable = Day > 1 && !Finished && !DialogueOpen && !IsTransitioning;
         RefreshObjective();
         journal.RefreshAvailability();
     }
@@ -445,16 +801,16 @@ public class MansionPrototype : MonoBehaviour
         if (IsTransitioning || Finished) return;
 
         // Later milestones take priority, so repeat conversations cannot regress the goal.
-        if (EvidenceFound)
-            objectiveText.text = "Review your clues, then accuse a suspect [F].";
-        else if (Day == 2)
-            objectiveText.text = "Find and inspect Harold\u2019s bag.";
-        else if (interrogationCompleted)
-            objectiveText.text = "Choose \u201cContinue to day 2\u201d to proceed.";
-        else if (introduced.Contains("Elara"))
-            objectiveText.text = "Interrogate Elara \u2014 costs 1 time point.";
+        if (clueSparkle.activeSelf)
+            objectiveText.text = "Find and investigate the sparkling clue.";
+        else if (gameManager.numberOfActions == 0 && Day == FinalDay)
+            objectiveText.text = "Make your final accusation [F].";
+        else if (interrogationCompleted && gameManager.numberOfActions == 0)
+            objectiveText.text = "End the day from any survivor\u2019s conversation.";
+        else if (introduced.Count > 0)
+            objectiveText.text = "Ask guests for more information (" + gameManager.numberOfActions + " actions remaining).";
         else
-            objectiveText.text = "Meet the guests (optional). Speak to Elara to investigate.";
+            objectiveText.text = "Meet the guests, then ask for more information.";
     }
 
     void RefreshNPCLabels()
@@ -462,12 +818,9 @@ public class MansionPrototype : MonoBehaviour
         foreach (var npc in npcs)
         {
             var label = npc.GetComponentInChildren<TextMeshPro>();
-            if (label) label.text = npc.prototypeCharacterId == "Harold" && Day == 2 ? "HAROLD'S BAG\n<color=#E9C980>Inspect evidence</color>" : npc.prototypeCharacterId.ToUpperInvariant();
-            if (npc.prototypeCharacterId == "Harold")
-            {
-                var body = npc.transform.Find("Body");
-                if (body) body.localScale = Day == 2 ? new Vector3(.7f, .3f, .7f) : Vector3.one;
-            }
+            bool alive = IsAlive(npc.prototypeCharacterId);
+            npc.gameObject.SetActive(alive);
+            if (label) label.text = npc.prototypeCharacterId.ToUpperInvariant();
         }
     }
 
@@ -570,6 +923,30 @@ public class MansionPrototype : MonoBehaviour
         var replay = MakeButton(replayArea, "Play Again", "Play Again", RestartRun);
         replay.GetComponentInChildren<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
         endingRoot.SetActive(false);
+        var clueModal = Panel(root.transform, "Clue Discovery Modal", Vector2.zero, Vector2.one,
+            new Color(.035f, .025f, .045f, .68f));
+        cluePopupRoot = clueModal.gameObject;
+        var dismissBackdrop = clueModal.gameObject.AddComponent<Button>();
+        dismissBackdrop.targetGraphic = clueModal;
+        dismissBackdrop.onClick.AddListener(CloseCluePopup);
+        var clueBorder = Panel(clueModal.transform, "Clue Border", new Vector2(.30f, .25f), new Vector2(.70f, .75f), Gold);
+        var clueCard = Panel(clueBorder.transform, "Clue Card", new Vector2(.008f, .008f), new Vector2(.992f, .992f), Cream);
+        cluePopupTitle = Text(clueCard.transform, "Clue Title", "", new Vector2(.08f, .77f), new Vector2(.92f, .93f), 34, Plum);
+        cluePopupTitle.alignment = TextAlignmentOptions.Center;
+        var clueImageFrame = Panel(clueCard.transform, "Clue Image Frame", new Vector2(.08f, .31f), new Vector2(.36f, .72f), Plum);
+        var clueImageArea = Rect(clueImageFrame.transform, "Clue Image", new Vector2(.025f, .025f), new Vector2(.975f, .975f));
+        cluePopupImage = clueImageArea.gameObject.AddComponent<Image>();
+        cluePopupImage.preserveAspect = true;
+        cluePopupImage.raycastTarget = false;
+        cluePopupDescription = Text(clueCard.transform, "Clue Description", "", new Vector2(.41f, .31f), new Vector2(.92f, .72f), 24, Ink);
+        cluePopupDescription.alignment = TextAlignmentOptions.TopLeft;
+        cluePopupDescription.enableAutoSizing = true;
+        cluePopupDescription.fontSizeMin = 18;
+        cluePopupDescription.fontSizeMax = 24;
+        var clueContinueArea = Rect(clueCard.transform, "Continue Area", new Vector2(.32f, .09f), new Vector2(.68f, .22f));
+        var clueContinue = MakeButton(clueContinueArea, "Continue", "Continue", CloseCluePopup);
+        clueContinue.GetComponentInChildren<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+        cluePopupRoot.SetActive(false);
         var fade = Panel(root.transform, "Day Transition", Vector2.zero, Vector2.one, Color.black);
         dayTransition = fade.gameObject.AddComponent<CanvasGroup>();
         dayTransition.blocksRaycasts = true;

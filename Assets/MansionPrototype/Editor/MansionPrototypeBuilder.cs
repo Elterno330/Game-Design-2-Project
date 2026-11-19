@@ -43,15 +43,29 @@ public static class MansionPrototypeBuilder
         // Use a broad, quiet light so labels and navigation remain legible from directly above.
         RenderSettings.ambientLight = new Color(.65f, .67f, .72f);
         var root = new GameObject("Mansion Prototype");
-        var manager = root.AddComponent<GameManager>(); manager.scriptedPrototype = true; manager.numberOfActions = 1; manager.player = player;
+        var manager = root.AddComponent<GameManager>(); manager.scriptedPrototype = true; manager.numberOfActions = 3; manager.player = player;
         player.gameManager = manager;
         var director = root.AddComponent<MansionPrototype>(); director.player = player; director.gameManager = manager;
         director.dialogueFont = PrepareDialogueFont();
         director.dialogueScript = AssetDatabase.LoadAssetAtPath<TextAsset>(Folder + "/Data/PrototypeDialogue.json");
-        string[] names = { "Daisy", "Sebes", "Percy", "Elara", "Harold" };
-        string[] files = { "Daisy Finn", "Sebes Yorke", "Percy Norn", "Elara Venn", "Harold Palmer" };
-        Vector2[] positions = { new Vector2(-3.5f, 1.8f), new Vector2(4.2f, 4.6f), new Vector2(-3f, -.4f), new Vector2(5f, -.5f), new Vector2(-1.8f, 4.5f) };
-        director.npcs = new NPCDialog[5]; director.portraits = new Texture2D[5]; director.portraitRegions = new Rect[5];
+        string[] clueIds = { "blood", "wall_scratches", "tooth", "fur", "pawprint", "footprint", "stolen_item", "lost_item", "door_scratches", "broken_window" };
+        director.clueIconIds = clueIds;
+        director.clueIcons = new Sprite[clueIds.Length];
+        for (int i = 0; i < clueIds.Length; i++)
+        {
+            string cluePath = Folder + "/Clues/" + clueIds[i] + ".png";
+            var clueImporter = (TextureImporter)AssetImporter.GetAtPath(cluePath);
+            clueImporter.textureType = TextureImporterType.Sprite;
+            clueImporter.spriteImportMode = SpriteImportMode.Single;
+            clueImporter.mipmapEnabled = false;
+            clueImporter.maxTextureSize = 512;
+            clueImporter.SaveAndReimport();
+            director.clueIcons[i] = AssetDatabase.LoadAssetAtPath<Sprite>(cluePath);
+        }
+        string[] names = { "Daisy", "Elara", "Mataba", "Rowan", "Pell", "Sebes", "Shizumi", "Harold", "Marco", "Percy" };
+        string[] files = { "Daisy Finn", "Elara Venn", "Mataba Eiji", "Rowan Hale", "Pell Venne", "Sebes Yorke", "Shizumi Kushinada", "Harold Palmer", "Marco Albizu", "Percy Norn" };
+        Vector3[] positions = FindSpreadPositions(player, names.Length);
+        director.npcs = new NPCDialog[names.Length]; director.portraits = new Texture2D[names.Length]; director.portraitRegions = new Rect[names.Length];
         Directory.CreateDirectory(Folder + "/Materials"); AssetDatabase.Refresh();
         for (int i = 0; i < names.Length; i++)
         {
@@ -59,8 +73,8 @@ public static class MansionPrototypeBuilder
             var importer = (TextureImporter)AssetImporter.GetAtPath(path);
             importer.textureType = TextureImporterType.Default; importer.isReadable = true; importer.mipmapEnabled = false; importer.maxTextureSize = 2048; importer.textureCompression = TextureImporterCompression.Uncompressed; importer.SaveAndReimport();
             director.portraits[i] = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-            director.portraitRegions[i] = PortraitRegion(director.portraits[i]);
-            var npc = new GameObject(names[i]); npc.transform.SetParent(root.transform); npc.transform.position = Ground(positions[i].x, positions[i].y);
+            director.portraitRegions[i] = PortraitRegion(names[i], director.portraits[i]);
+            var npc = new GameObject(names[i]); npc.transform.SetParent(root.transform); npc.transform.position = positions[i];
             var body = GameObject.CreatePrimitive(PrimitiveType.Capsule); body.name = "Body"; body.transform.SetParent(npc.transform, false);
             var materialPath = Folder + "/Materials/" + names[i] + ".mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
@@ -71,12 +85,24 @@ public static class MansionPrototypeBuilder
             var label = labelGO.AddComponent<TextMeshPro>(); label.text = names[i].ToUpperInvariant(); label.fontSize = 4; label.alignment = TextAlignmentOptions.Center; label.color = new Color(.98f,.92f,.77f); label.outlineWidth = .22f;
             label.rectTransform.sizeDelta = new Vector2(6, 1.5f);
         }
-        manager.NPCDialog = director.npcs[3];
+        Vector2[] cluePositions = {
+            new Vector2(-4.3f, .3f), new Vector2(4.5f, .5f), new Vector2(-4.5f, 3.2f),
+            new Vector2(3f, 3.1f), new Vector2(0f, 2.8f)
+        };
+        director.clueSpots = new Transform[cluePositions.Length];
+        for (int i = 0; i < cluePositions.Length; i++)
+        {
+            var spot = new GameObject("Clue Spot " + (i + 1).ToString("00"));
+            spot.transform.SetParent(root.transform);
+            spot.transform.position = Ground(cluePositions[i].x, cluePositions[i].y) + Vector3.up * .35f;
+            director.clueSpots[i] = spot.transform;
+        }
+        manager.NPCDialog = director.npcs.First(npc => npc.prototypeCharacterId == "Elara");
         Physics.SyncTransforms();
         ValidateWalkability(player, director.npcs);
         EditorSceneManager.SaveScene(scene, ScenePath);
         AssetDatabase.SaveAssets();
-        Debug.Log("MANSION PROTOTYPE BUILT: five characters, one time point, two-day dialogue and accusation flow.");
+        Debug.Log("MANSION PROTOTYPE BUILT: ten characters, three time points, five-day dialogue and accusation flow.");
     }
 
     static Vector3 Ground(float x, float z)
@@ -165,30 +191,44 @@ public static class MansionPrototypeBuilder
         mesh.RecalculateNormals(); mesh.RecalculateBounds();
         string path = Folder + "/Materials/StairRamp.asset";
         var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
-        if (existing) { EditorUtility.CopySerialized(mesh,existing); Object.DestroyImmediate(mesh); mesh=existing; }
+        // Keep the hand-validated collision ramp when it already exists. The
+        // imported mansion contains several objects named "Stair", and using
+        // the first one's narrow bounds caused the rebuilt ramp to become
+        // impassable.
+        if (existing) { Object.DestroyImmediate(mesh); mesh = existing; }
         else AssetDatabase.CreateAsset(mesh,path);
         var ramp = new GameObject("Prototype Stair Ramp");
         ramp.AddComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     // Configure a portrait crop in UV coordinates; original JPG files remain intact.
-    static Rect PortraitRegion(Texture2D texture)
+    // Each source illustration has a different pose, so silhouette bounds are not a
+    // reliable proxy for the face. These hand-authored anchors keep the face in the
+    // same place in every dialogue portrait.
+    static Rect PortraitRegion(string characterId, Texture2D texture)
     {
-        var pixels = texture.GetPixels32(); int w = texture.width, h = texture.height;
-        Color32 background = pixels[0]; int minX = w, maxX = 0, minY = h, maxY = 0;
-        for (int y = 0; y < h; y += 3)
-            for (int x = 0; x < w; x += 3)
-            {
-                var c = pixels[y * w + x];
-                if (Math.Abs(c.r-background.r)+Math.Abs(c.g-background.g)+Math.Abs(c.b-background.b) < 95) continue;
-                minX = Math.Min(minX,x); maxX = Math.Max(maxX,x); minY = Math.Min(minY,y); maxY = Math.Max(maxY,y);
-            }
-        if (minX >= maxX) return new Rect(0,0,1,1);
-        float height = (maxY-minY)*.62f;
-        float width = height * .73f;
-        float center = (minX+maxX)*.5f;
-        float top = Math.Min(h,maxY+height*.035f);
-        return new Rect(Mathf.Clamp(center-width*.5f,0,w-width)/w, Math.Max(0,top-height)/h, width/w, height/h);
+        var faceAnchors = new System.Collections.Generic.Dictionary<string, Vector2>
+        {
+            { "Daisy",   new Vector2(.49f, .83f) },
+            { "Elara",   new Vector2(.53f, .80f) },
+            { "Mataba",  new Vector2(.44f, .85f) },
+            { "Rowan",   new Vector2(.50f, .82f) },
+            { "Pell",    new Vector2(.44f, .86f) },
+            { "Sebes",   new Vector2(.46f, .83f) },
+            { "Shizumi", new Vector2(.48f, .81f) },
+            { "Harold",  new Vector2(.51f, .82f) },
+            { "Marco",   new Vector2(.45f, .81f) },
+            { "Percy",   new Vector2(.45f, .84f) }
+        };
+
+        Vector2 face = faceAnchors.TryGetValue(characterId, out var anchor)
+            ? anchor : new Vector2(.5f, .82f);
+        const float cropHeight = .34f;
+        float cropWidth = cropHeight * texture.height / texture.width * .82f;
+        float x = Mathf.Clamp(face.x - cropWidth * .5f, 0f, 1f - cropWidth);
+        // Keep the eyes slightly above center and leave room for shoulders.
+        float y = Mathf.Clamp(face.y - cropHeight * .58f, 0f, 1f - cropHeight);
+        return new Rect(x, y, cropWidth, cropHeight);
     }
 
     static void ValidateWalkability(Player player, NPCDialog[] npcs)
@@ -212,5 +252,137 @@ public static class MansionPrototypeBuilder
             }
         }
         finally { instance.Remove(); Object.DestroyImmediate(data); }
+    }
+
+    static Vector3[] FindSpreadPositions(Player player, int count)
+    {
+        var mansion = GameObject.Find("Mansion");
+        var sources = new System.Collections.Generic.List<NavMeshBuildSource>();
+        NavMeshBuilder.CollectSources(mansion.transform, ~0, NavMeshCollectGeometry.PhysicsColliders, 0,
+            new System.Collections.Generic.List<NavMeshBuildMarkup>(), sources);
+        var settings = NavMesh.GetSettingsByID(0);
+        settings.agentRadius = .5f; settings.agentHeight = 2f; settings.agentClimb = .35f;
+        var data = NavMeshBuilder.BuildNavMeshData(settings, sources,
+            new Bounds(new Vector3(0, 5, -15), new Vector3(100, 40, 100)), Vector3.zero, Quaternion.identity);
+        if (!data) throw new Exception("Could not build navigation data for character placement.");
+        var instance = NavMesh.AddNavMeshData(data);
+        try
+        {
+            if (!NavMesh.SamplePosition(player.transform.position - Vector3.up, out var start, 1f, NavMesh.AllAreas))
+                throw new Exception("Player spawn is not on the navigation mesh.");
+            var candidates = new System.Collections.Generic.List<Vector3>();
+            var stairCollider = GameObject.Find("Prototype Stair Ramp")?.GetComponent<Collider>();
+            Bounds stairBounds = stairCollider ? stairCollider.bounds : default;
+            // Use a dense grid so that rejecting doors and their approach lanes
+            // still leaves plenty of good room-interior positions to spread out.
+            for (float z = -14f; z <= 7f; z += 1f)
+                for (float x = -14f; x <= 14f; x += 1f)
+                {
+                    if (!TryGround(x, z, out Vector3 point)) continue;
+                    // Do not place a character beneath or immediately beside the
+                    // staircase. Expand beyond the ramp mesh to cover its visual shell.
+                    if (stairCollider && point.x >= stairBounds.min.x - 1.5f && point.x <= stairBounds.max.x + 1.5f
+                        && point.z >= stairBounds.min.z - 1.5f && point.z <= stairBounds.max.z + 1.5f) continue;
+                    // These are the mansion's actual narrow connections.  The
+                    // exclusion radius covers the opening plus its approaches in
+                    // both rooms, so an NPC cannot become a door-shaped obstacle.
+                    if (IsInAccessLane(point)) continue;
+                    if (!NavMesh.SamplePosition(point - Vector3.up, out var hit, .8f, NavMesh.AllAreas)) continue;
+                    // Doorways and other choke points sit close to a NavMesh edge
+                    // even when the point itself is reachable. Keep NPC capsules
+                    // about two player widths away from every navigation boundary.
+                    if (!NavMesh.FindClosestEdge(hit.position, out var edge, NavMesh.AllAreas)) continue;
+                    float edgeClearance = Vector2.Distance(
+                        new Vector2(hit.position.x, hit.position.z),
+                        new Vector2(edge.position.x, edge.position.z));
+                    // The authored access lanes are excluded explicitly below;
+                    // this smaller general margin keeps capsules off ordinary
+                    // walls without eliminating the mansion's usable interiors.
+                    if (edgeClearance < .75f) continue;
+                    var path = new NavMeshPath();
+                    if (!NavMesh.CalculatePath(start.position, hit.position, NavMesh.AllAreas, path)
+                        || path.status != NavMeshPathStatus.PathComplete) continue;
+                    Vector3 standing = hit.position + Vector3.up * 1.03f;
+                    if ((standing - player.transform.position).sqrMagnitude < 8f) continue;
+                    if (!HasRoomClearance(standing)) continue;
+                    candidates.Add(standing);
+                }
+            if (candidates.Count < count) throw new Exception("Not enough reachable character positions were found.");
+
+            var selected = new System.Collections.Generic.List<Vector3>();
+            while (selected.Count < count)
+            {
+                Vector3 best = candidates[0];
+                float bestDistance = float.MinValue;
+                foreach (Vector3 candidate in candidates)
+                {
+                    float minimum = selected.Count == 0
+                        ? (candidate - player.transform.position).sqrMagnitude
+                        : selected.Min(existing => (candidate - existing).sqrMagnitude);
+                    if (minimum <= bestDistance) continue;
+                    best = candidate; bestDistance = minimum;
+                }
+                selected.Add(best);
+                candidates.Remove(best);
+            }
+            return selected.ToArray();
+        }
+        finally
+        {
+            instance.Remove();
+            Object.DestroyImmediate(data);
+        }
+    }
+
+    static bool TryGround(float x, float z, out Vector3 point)
+    {
+        var floor = Physics.RaycastAll(new Vector3(x, 2.5f, z), Vector3.down, 5f)
+            .Where(hit => hit.collider.name == "Floor").OrderByDescending(hit => hit.point.y).FirstOrDefault();
+        if (!floor.collider) { point = default; return false; }
+        point = floor.point + Vector3.up * 1.03f;
+        return true;
+    }
+
+    static bool HasRoomClearance(Vector3 standing)
+    {
+        // A reachable NavMesh point can still be the center of a doorway. Probe
+        // around the full NPC capsule and keep only points with room on most
+        // sides, preventing characters from becoming movable locked doors.
+        Vector3[] directions =
+        {
+            Vector3.forward, Vector3.back, Vector3.left, Vector3.right,
+            new Vector3(1, 0, 1).normalized, new Vector3(1, 0, -1).normalized,
+            new Vector3(-1, 0, 1).normalized, new Vector3(-1, 0, -1).normalized
+        };
+        const float clearance = 1.75f;
+        int openDirections = 0;
+        foreach (Vector3 direction in directions)
+        {
+            Vector3 target = standing + direction * clearance;
+            if (Physics.Linecast(standing, target, out _, Physics.DefaultRaycastLayers,
+                    QueryTriggerInteraction.Ignore)) continue;
+            if (!NavMesh.SamplePosition(target - Vector3.up, out var navHit, .45f, NavMesh.AllAreas)) continue;
+            Vector2 expected = new Vector2(target.x, target.z);
+            Vector2 sampled = new Vector2(navHit.position.x, navHit.position.z);
+            if (Vector2.Distance(expected, sampled) <= .45f) openDirections++;
+        }
+        // Furniture can obstruct a couple of probes even at a good room spot.
+        // The explicit access-lane exclusion above handles the mansion doors.
+        return openDirections >= 6;
+    }
+
+    static bool IsInAccessLane(Vector3 point)
+    {
+        // World-space centers of the three narrow passages in the current
+        // mansion layout. Keep roughly two player lengths clear around each.
+        Vector2[] passageCenters =
+        {
+            new Vector2(-14f, -2f),
+            new Vector2(-6f, 0f),
+            new Vector2(-2f, 6f)
+        };
+        Vector2 position = new Vector2(point.x, point.z);
+        const float clearRadius = 3.25f;
+        return passageCenters.Any(center => Vector2.Distance(position, center) < clearRadius);
     }
 }

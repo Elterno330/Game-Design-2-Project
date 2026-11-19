@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -15,6 +16,7 @@ public sealed class MansionJournal : MonoBehaviour
 
     MansionPrototype story;
     GameObject overlay, notification;
+    TextMeshProUGUI notificationText;
     RectTransform content;
     ScrollRect scroll;
     Button entryButton, charactersTab, cluesTab;
@@ -125,12 +127,28 @@ public sealed class MansionJournal : MonoBehaviour
         if (IsOpen) RefreshContent();
     }
 
-    public void RecordInterrogation() => AnnounceClue(Data.RecordInterrogation());
-    public void RecordBagInspection() => AnnounceClue(Data.RecordBagInspection());
+    public void RecordDeath(string id)
+    {
+        Data.RecordDeath(id);
+        if (IsOpen) RefreshContent();
+    }
 
-    void AnnounceClue(bool added)
+    public void RecordBagInspection() => AnnounceUpdate(Data.RecordBagInspection(), "New physical clue added to Journal");
+    public bool KnowsTrait(string characterId, string trait) => Data.KnowsTrait(characterId, trait);
+
+    public void RecordFact(MansionPrototype.CharacterFact fact, MansionPrototype.Character target, string trait, string speaker, int day)
+    {
+        AnnounceUpdate(Data.RecordFact(target.id, trait),
+            "New character trait added to Journal");
+    }
+    public void RecordGeneratedClue(MansionPrototype.ClueDefinition clue, int day)
+        => AnnounceUpdate(Data.RecordGeneratedClue(clue.id, clue.title, clue.description, day),
+            "New physical clue added to Journal");
+
+    void AnnounceUpdate(bool added, string message)
     {
         if (!added) return;
+        notificationText.text = message;
         notificationUntil = Time.unscaledTime + 3f;
         notification.SetActive(true);
         if (IsOpen) RefreshContent();
@@ -175,18 +193,30 @@ public sealed class MansionJournal : MonoBehaviour
                 layout.childControlWidth = layout.childControlHeight = true;
                 layout.childForceExpandWidth = layout.childForceExpandHeight = false;
                 var imageRect = Rect(row, "Portrait");
-                var image = imageRect.gameObject.AddComponent<RawImage>();
-                image.texture = story.portraits[i]; image.uvRect = story.portraitRegions[i];
-                image.raycastTarget = false;
-                float ratio = image.texture.width * image.uvRect.width / (image.texture.height * image.uvRect.height);
                 var size = imageRect.gameObject.AddComponent<LayoutElement>();
-                size.minWidth = size.preferredWidth = 90; size.preferredHeight = 90 / ratio;
+                size.minWidth = size.preferredWidth = 90;
+                if (story.TryGetPortrait(character.id, out var texture, out var region))
+                {
+                    var image = imageRect.gameObject.AddComponent<RawImage>();
+                    image.texture = texture; image.uvRect = region; image.raycastTarget = false;
+                    float ratio = texture.width * region.width / (texture.height * region.height);
+                    size.preferredHeight = 90 / ratio;
+                }
+                else
+                {
+                    size.preferredHeight = 90;
+                    BuildFallbackClueIcon(imageRect, false);
+                }
                 var column = Column(row, "Profile");
                 column.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
                 Label(column, "Name", character.displayName, 23, Ink);
                 Label(column, "Identity", character.identity, 20, Ink);
-                if (character.id == "Harold" && Data.HaroldDeathKnown)
-                    Label(column, "Status", "Status: Deceased (found on Day II).", 20, Plum);
+                var learnedTraits = Data.LearnedTraits(character.id);
+                Label(column, "Traits", learnedTraits.Count == 0
+                    ? "Traits: No traits learned yet."
+                    : "Traits: " + string.Join("  /  ", learnedTraits.Select(FriendlyTrait)), 19, Brown);
+                if (Data.IsDead(character.id))
+                    Label(column, "Status", "Status: Deceased.", 20, Plum);
                 count++;
             }
         }
@@ -197,6 +227,20 @@ public sealed class MansionJournal : MonoBehaviour
         // Layout settles before the next rendered frame, including wrapped TMP heights.
         LayoutRebuilder.ForceRebuildLayoutImmediate(content);
         scroll.verticalNormalizedPosition = 1f;
+    }
+
+    public static string FriendlyTrait(string trait)
+    {
+        switch (trait)
+        {
+            case "AnimalSide": return "Connected to Animal Side";
+            case "HumanSide": return "Connected to Human Side";
+            case "NeedsMoney": return "Needs Money";
+            case "CarryingTooMuch": return "Carrying Too Much";
+            case "WantsToLeave": return "Wants To Leave";
+            case "HasToStay": return "Has To Stay";
+            default: return trait;
+        }
     }
 
     void BuildClueCard(MansionJournalData.Clue clue)
@@ -252,6 +296,12 @@ public sealed class MansionJournal : MonoBehaviour
             image.sprite = story.journalToolsIcon;
             image.preserveAspect = true; image.raycastTarget = false;
         }
+        else if (story.TryGetClueIcon(clueId, out var clueIcon))
+        {
+            var image = Area(imageArea, "Clue Sprite", Vector2.zero, Vector2.one).gameObject.AddComponent<Image>();
+            image.sprite = clueIcon;
+            image.preserveAspect = true; image.raycastTarget = false;
+        }
         else
             BuildFallbackClueIcon(imageArea, clueId == "tools");
     }
@@ -260,17 +310,7 @@ public sealed class MansionJournal : MonoBehaviour
     {
         texture = null;
         region = new Rect(0, 0, 1, 1);
-        var characters = story.Script?.characters;
-        int index = characters == null ? -1 : Array.FindIndex(characters, character => character.id == id);
-        if (index < 0 || story.portraits == null || index >= story.portraits.Length || !story.portraits[index])
-            return false;
-        texture = story.portraits[index];
-        if (story.portraitRegions != null && index < story.portraitRegions.Length)
-        {
-            var crop = story.portraitRegions[index];
-            if (crop.width > 0 && crop.height > 0) region = crop;
-        }
-        return true;
+        return story.TryGetPortrait(id, out texture, out region);
     }
 
     static Image BorderedPanel(RectTransform rect, Color color)
@@ -406,10 +446,10 @@ public sealed class MansionJournal : MonoBehaviour
 
         var toast = Area(canvas, "Journal Notification", new Vector2(.34f, .90f), new Vector2(.70f, .97f));
         Panel(toast, Plum).raycastTarget = false; notification = toast.gameObject;
-        var message = Label(toast, "Message", "New clue added to Journal", 22, Cream);
-        message.alignment = TextAlignmentOptions.Center;
-        message.enableAutoSizing = true; message.fontSizeMin = 14; message.fontSizeMax = 22;
-        message.rectTransform.anchorMin = new Vector2(.025f, .05f); message.rectTransform.anchorMax = new Vector2(.975f, .95f);
-        message.rectTransform.offsetMin = message.rectTransform.offsetMax = Vector2.zero;
+        notificationText = Label(toast, "Message", "Journal updated", 22, Cream);
+        notificationText.alignment = TextAlignmentOptions.Center;
+        notificationText.enableAutoSizing = true; notificationText.fontSizeMin = 14; notificationText.fontSizeMax = 22;
+        notificationText.rectTransform.anchorMin = new Vector2(.025f, .05f); notificationText.rectTransform.anchorMax = new Vector2(.975f, .95f);
+        notificationText.rectTransform.offsetMin = notificationText.rectTransform.offsetMax = Vector2.zero;
     }
 }
